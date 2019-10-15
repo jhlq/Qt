@@ -6,12 +6,9 @@
 class Triangle
 {
 public:
-    Triangle(int x,int y,int pixX,int pixY);
-
+    Triangle(int x,int y);
     int x;
     int y;
-    int pixX;
-    int pixY;
     int player;
     int prevPlayer;
     std::vector<Triangle> captured;

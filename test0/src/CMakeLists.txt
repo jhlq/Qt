@@ -5,7 +5,7 @@ set(project_ui mainwindow.ui)
 qt5_wrap_ui(ui_wrap ${project_ui})
 qt5_wrap_cpp(moc_sources ${project_headers})
 
-add_library (BoardLib triangle.cpp triangle.h)
+add_library (BoardLib triangle.cpp triangle.h trianglegrid.cpp trianglegrid.h)
 add_executable(board 
 	${project_sources} 
 	${project_headers}

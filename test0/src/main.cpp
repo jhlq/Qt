@@ -9,11 +9,21 @@ using namespace shark;
 #include <iostream>
 using namespace std;
 
-#include "triangle.h"
+#include "trianglegrid.h"
 
 int main(int argc, char *argv[]){
 
-    Triangle tri=Triangle(1,2,3,4);
+    Triangle t1=Triangle(1,2);
+    Triangle t2=Triangle(3,2);
+    t1.player=1;
+    t2.player=2;
+    cout << t1.sameAs(&t2) << endl;
+    cout << t1.markedDead << endl;
+    bool e=t1.player==t2.player || ((t1.markedDead||t1.player==0)&&(t2.markedDead||t1.player==0));
+    cout << e << endl;
+    TriangleGrid tg(7);
+    cout<<tg.sideLength<<endl;
+    cout<<tg.nTriangles()<<endl;
 
     string filename="/home/unikt/SharkML/Shark/examples/Supervised/data/quickstartData.csv";
     ClassificationDataset data;

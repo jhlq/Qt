@@ -1,17 +1,17 @@
 #include "triangle.h"
 
-Triangle::Triangle(int x,int y,int pixX,int pixY)
+Triangle::Triangle(int x,int y)
 {
     this->x=x;
     this->y=y;
-    this->pixX=pixX;
-    this->pixY=pixY;
     this->player=0;
+    this->markedDead=false;
 }
 
 bool Triangle::alive(){
     return player>0 && !markedDead;
 }
+/*
 bool Triangle::sameAs(Triangle *t){
     if (t->player==this->player){
         return true;
@@ -21,4 +21,7 @@ bool Triangle::sameAs(Triangle *t){
         return true;
     }
     return false;
+}*/
+bool Triangle::sameAs(Triangle *t){
+    return this->player==t->player || ((this->markedDead||this->player==0)&&(t->markedDead||t->player==0));
 }

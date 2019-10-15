@@ -11,7 +11,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 enable_testing ()
 add_subdirectory (tests)
 add_subdirectory (src) 
-add_test (NAME TriangleTests COMMAND TriangleTests)
+#add_test (NAME RunAllTests COMMAND RunAllTests)
 
 #set(project_sources mainwindow.cpp main.cpp triangle.cpp)
 #set(project_headers mainwindow.h triangle.h)
@@ -31,4 +31,5 @@ add_test (NAME TriangleTests COMMAND TriangleTests)
 #	Qt5::Widgets
 #   ${SHARK_LIBRARIES})
 #target_link_libraries(cmake0 ${SHARK_LIBRARIES})
+
 
