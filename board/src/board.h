@@ -11,8 +11,10 @@ public:
     Board(int sideLength);
     TriangleGrid tg;
     int player;
-    //Board deepcopy();
+    bool isValidMove(int x,int y,int player);
     bool isValidMove(Triangle &t);
+    void placeMove(int x,int y);
+    void placeMove(int x,int y,int player);
     std::vector<Triangle> moves;
     std::vector<std::string> history;
     int greenCaptures;

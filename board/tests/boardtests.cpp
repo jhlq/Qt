@@ -17,7 +17,14 @@ BOOST_AUTO_TEST_CASE(test0)
 BOOST_AUTO_TEST_CASE(test1)
 {
     Board board=Board(7);
-    Board bc=Board(board);//board.deepcopy();
+    Board bc=Board(board);
+    bc.tg.set(0,0,1);
+    BOOST_CHECK_EQUAL(board.tg.get(0,0).player,0);
+}
+BOOST_AUTO_TEST_CASE(test2)
+{
+    Board board=Board(7);
+    board.placeMove(1,1);
     bc.tg.set(0,0,1);
     BOOST_CHECK_EQUAL(board.tg.get(0,0).player,0);
 }
