@@ -29,7 +29,7 @@ bool Triangle::sameAs(Triangle *t){
     }
     return false;
 }*/
-bool Triangle::sameTenantAs(Triangle &t){
+bool Triangle::sameTenantAs(const Triangle &t){
     return this->player==t.player || ((this->markedDead||this->player==0)&&(t.markedDead||t.player==0));
 }
 

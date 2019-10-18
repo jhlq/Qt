@@ -20,6 +20,7 @@ Triangle TriangleGrid::get(int x, int y){
     return triangles[y][x];
 }
 void TriangleGrid::set(int x, int y, int player){
+    //triangles[y][x].prevPlayer=triangles[y][x].player;
     triangles[y][x].player=player;
 }
 bool TriangleGrid::has(int x, int y){
@@ -37,7 +38,7 @@ int TriangleGrid::nTriangles(){ //this should be sideLength^2
     }
     return n;
 }
-std::vector<Triangle> TriangleGrid::adjacent(Triangle &triangle){
+std::vector<Triangle> TriangleGrid::adjacent(const Triangle &triangle){
     std::vector<Triangle> adj;
     int leny=this->sideLength; //this->triangles.size();
     int lenx=this->triangles[triangle.y].size();
@@ -64,7 +65,7 @@ std::vector<Triangle> TriangleGrid::adjacent(Triangle &triangle){
     }
     return adj;
 }
-std::vector<Triangle> TriangleGrid::adjacent(std::vector<Triangle> &group){
+std::vector<Triangle> TriangleGrid::adjacent(const std::vector<Triangle> &group){
     std::vector<Triangle> adjg;
     int ng=group.size();
     for (int n=0;n<ng;n++){
@@ -84,7 +85,7 @@ std::vector<Triangle> TriangleGrid::adjacent(std::vector<Triangle> &group){
     }
     return adjg;
 }
-std::vector<Triangle> TriangleGrid::adjacentPieces(Triangle &tri){
+std::vector<Triangle> TriangleGrid::adjacentPieces(const Triangle &tri){
     std::vector<Triangle> adj=adjacent(tri);
     std::vector<Triangle> adjp;
     int ladj=adj.size();
@@ -96,7 +97,7 @@ std::vector<Triangle> TriangleGrid::adjacentPieces(Triangle &tri){
     }
     return adjp;
 }
-std::vector<Triangle> TriangleGrid::adjacentPieces(std::vector<Triangle> &group){
+std::vector<Triangle> TriangleGrid::adjacentPieces(const std::vector<Triangle> &group){
     std::vector<Triangle> adj=adjacent(group);
     std::vector<Triangle> adjp;
     Triangle g0=group[0];
@@ -109,7 +110,7 @@ std::vector<Triangle> TriangleGrid::adjacentPieces(std::vector<Triangle> &group)
     }
     return adjp;
 }
-std::vector<Triangle> TriangleGrid::getConnected(Triangle &tri){
+std::vector<Triangle> TriangleGrid::getConnected(const Triangle &tri){
     std::vector<Triangle> group;
     group.push_back(tri);
     std::vector<Triangle> recentlyAdded=adjacentPieces(tri);
@@ -124,14 +125,14 @@ std::vector<Triangle> TriangleGrid::getConnected(Triangle &tri){
     }
     return group;
 }
-std::vector<Triangle> TriangleGrid::getGroup(Triangle &tri){
+std::vector<Triangle> TriangleGrid::getGroup(const Triangle &tri){
     if (tri.player==0){
         std::vector<Triangle> v;
         return v;
     }
     return getConnected(tri);
 }
-std::vector<Triangle> TriangleGrid::getCluster(std::vector<Triangle> &group){
+std::vector<Triangle> TriangleGrid::getCluster(const std::vector<Triangle> &group){
     std::vector<Triangle> cluster;
     if (group.empty()){
         return cluster;
@@ -187,11 +188,11 @@ std::vector<Triangle> TriangleGrid::getCluster(std::vector<Triangle> &group){
     }
     return cluster;
 }
-std::vector<Triangle> TriangleGrid::getCluster(Triangle &tri){
+std::vector<Triangle> TriangleGrid::getCluster(const Triangle &tri){
     std::vector<Triangle> g=getGroup(tri);
     return getCluster(g);
 }
-int TriangleGrid::liberties(std::vector<Triangle> &group){
+int TriangleGrid::liberties(const std::vector<Triangle> &group){
     std::vector<Triangle> adj=adjacent(group);
     int lib=0;
     for (int i=0;i<adj.size();i++){
@@ -201,15 +202,25 @@ int TriangleGrid::liberties(std::vector<Triangle> &group){
     }
     return lib;
 }
-int TriangleGrid::liberties(Triangle &tri){
+int TriangleGrid::liberties(const Triangle &tri){
     std::vector<Triangle> group=getGroup(tri);
     return liberties(group);
 }
+//void TriangleGrid::addCaptured(int x, int y, Triangle &captured){
+//    triangles[y][x].captured.push_back(captured);
+//}
 void TriangleGrid::removeGroup(std::vector<Triangle> &group,Triangle &capturer){
     for (int n=0;n<group.size();n++){
-        group[n].prevPlayer=group[n].player; //remove multiple indexing? Currently supports removing a mixed group...
-        group[n].player=0;
-        capturer.captured.push_back(group[n]);
+        //group[n].prevPlayer=group[n].player; //remove multiple indexing? Currently supports removing a mixed group...
+        //group[n].player=0;
+        Triangle gt=group[n];
+        //Triangle t=get(gt.x,gt.y);
+        //t.prevPlayer=gt.player;
+        //t.player=0;
+        set(gt.x,gt.y,0);
+        //capturer.captured.push_back(group[n]);
+        //Triangle ct=get(gt.x,gt.y);
+        //addCaptured(capturer.x,capturer.y,ct);
     }
 }
 std::string TriangleGrid::historyString(){

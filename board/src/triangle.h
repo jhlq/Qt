@@ -11,12 +11,12 @@ public:
     int x;
     int y;
     int player;
-    int prevPlayer;
-    std::vector<Triangle> captured;
+    //int prevPlayer;
+    //std::vector<Triangle> captured;
     bool markedDead;
 
     bool alive();
-    bool sameTenantAs(Triangle &t);
+    bool sameTenantAs(const Triangle &t);
     bool operator==(const Triangle& t);
 };
 

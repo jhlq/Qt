@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(test7)
     BOOST_CHECK_EQUAL(v.size(),2);
     BOOST_CHECK_EQUAL(tg.adjacent(v).size(),4);
     BOOST_CHECK_EQUAL(tg.liberties(v),4);
-    Triangle capturer=Triangle(-1,0,2);
-    tg.removeGroup(v,capturer); //must supply capturing triangle
+    Triangle capturer=Triangle(1,0);
+    tg.removeGroup(v,capturer); //must supply capturing triangle, for undo purposes
     BOOST_CHECK_EQUAL(tg.get(1,5).player,0);
 }
