@@ -7,20 +7,16 @@
 
 class TriangleGrid
 {
-private:
-    std::vector<std::vector<Triangle>> triangles; //change this to 1D array for performance?
-
-friend class Board;
-
 public:
+    std::vector<std::vector<Triangle>> triangles; //change this to 1D array for performance? Nah, iterating over it is performed in various places
     TriangleGrid(int sideLength);
     Triangle get(int x,int y);
     void set(int x,int y,int player);
     bool has(int x,int y);
-    //void addCaptured(int x,int y,Triangle &captured);
     int sideLength;
     void setUpGrid();
     int nTriangles();
+    std::vector<Triangle> adjacent(int x,int y);
     std::vector<Triangle> adjacent(const Triangle &triangle);
     std::vector<Triangle> adjacent(const std::vector<Triangle> &group);
     std::vector<Triangle> adjacentPieces(const Triangle &tri);

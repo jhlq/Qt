@@ -1,5 +1,5 @@
-set(project_sources mainwindow.cpp main.cpp diagramscene.cpp)
-set(project_headers mainwindow.h diagramscene.h)
+set(project_sources mainwindow.cpp main.cpp diagramscene.cpp screentriangle.cpp screenboard.cpp)
+set(project_headers mainwindow.h diagramscene.h screentriangle.h screenboard.h)
 set(project_ui mainwindow.ui)
 # wrap the ui file to a c++ header
 qt5_wrap_ui(ui_wrap ${project_ui})

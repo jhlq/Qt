@@ -38,6 +38,9 @@ int TriangleGrid::nTriangles(){ //this should be sideLength^2
     }
     return n;
 }
+std::vector<Triangle> TriangleGrid::adjacent(int x,int y){
+    return adjacent(Triangle(x,y));
+}
 std::vector<Triangle> TriangleGrid::adjacent(const Triangle &triangle){
     std::vector<Triangle> adj;
     int leny=this->sideLength; //this->triangles.size();

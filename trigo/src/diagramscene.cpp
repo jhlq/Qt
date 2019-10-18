@@ -1,7 +1,6 @@
 #include <QtWidgets>
 
 #include "diagramscene.h"
-#include <iostream>
 
 DiagramScene::DiagramScene(QObject *parent) : QGraphicsScene(parent)
 {
@@ -16,8 +15,7 @@ void DiagramScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         int xnow=event->scenePos().x();
         int ynow=event->scenePos().y();
         int d=(xnow-x)*(xnow-x)+(ynow-y)*(ynow-y);
-        if (d<15){
-            std::cout<<x<<","<<y<<std::endl;
+        if (d<50){
             emit released(x,y);
         }
     }

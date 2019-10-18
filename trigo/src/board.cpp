@@ -30,7 +30,7 @@ bool Board::isValidMove(int x,int y,int player){
     return isValidMove(t);
 }
 bool Board::isValidMove(const Triangle &t){ //refactor?
-    if (!tg.has(t.x,t.y)){
+    if (!tg.has(t.x,t.y) || tg.get(t.x,t.y).player!=0){
         return false;
     }
     Board bc=Board(*this);

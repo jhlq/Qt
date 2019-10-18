@@ -2,9 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "screenboard.h"
 
 class DiagramScene;
-class DiagramItem;
+//class DiagramItem;
 
 namespace Ui {
 class MainWindow;
@@ -17,13 +18,16 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    double unitSize;
+    ScreenBoard *screenboard;
+    //double unitSize;
 
 private:
     Ui::MainWindow *ui;
 
 private slots:
-    void addCircle(int x,int y);
+    void addCircle(int x,int y,int player);
+    void drawGrid();
+    void placemoves();
 
 private:
     DiagramScene *diagramScene;
