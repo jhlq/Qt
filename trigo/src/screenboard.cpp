@@ -75,8 +75,10 @@ void ScreenBoard::clickevent(int pixX, int pixY){
     }
 }
 void ScreenBoard::undo(){
-    board.undo();
-    emit modifiedmoves();
+    if (!board.moves.empty()){
+        board.undo();
+        emit modifiedmoves();
+    }
 }
 void ScreenBoard::pass(){
     board.pass();

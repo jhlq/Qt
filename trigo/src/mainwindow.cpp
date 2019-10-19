@@ -100,13 +100,15 @@ void MainWindow::placemoves(){
             }
         }
     }
-    QGraphicsEllipseItem *circle=new QGraphicsEllipseItem();
-    double s=screenboard->unitSize/3;
-    Triangle t=screenboard->board.moves[screenboard->board.moves.size()-1];
-    ScreenTriangle st=screenboard->triangles[t.y][t.x];
-    circle->setRect(st.pixX-s/2,st.pixY-s/2,s,s);
-    circle->setBrush(QColor::fromRgbF(1, 1, 1, 1)); //QColor::fromRgbF(0, 1, 0, 1)
-    diagramScene->addItem(circle);
+    if (!screenboard->board.moves.empty()){
+        QGraphicsEllipseItem *circle=new QGraphicsEllipseItem();
+        double s=screenboard->unitSize/3;
+        Triangle t=screenboard->board.moves[screenboard->board.moves.size()-1];
+        ScreenTriangle st=screenboard->triangles[t.y][t.x];
+        circle->setRect(st.pixX-s/2,st.pixY-s/2,s,s);
+        circle->setBrush(QColor::fromRgbF(1, 1, 1, 1)); //QColor::fromRgbF(0, 1, 0, 1)
+        diagramScene->addItem(circle);
+    }
 
     updatescore();
 }
