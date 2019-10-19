@@ -2,7 +2,8 @@
 #include "ui_mainwindow.h"
 
 #include "diagramscene.h"
-//#include "diagramitem.h"
+#include "screenboard.h"
+#include "newgamedialog.h"
 #include <QGraphicsItem>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -11,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    screenboard=new ScreenBoard(7,30,50,50);
+    screenboard=new ScreenBoard(7,30);
     diagramScene = new DiagramScene();
     diagramScene->setSceneRect(QRect(0, 0, 600, 500));
 
@@ -24,10 +25,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(passButton, SIGNAL(clicked()),screenboard,SLOT(pass()));
     QPushButton *scoreButton=this->findChild<QPushButton*>("scoreButton");
     connect(scoreButton, SIGNAL(clicked()),screenboard,SLOT(score()));
+    QPushButton *ngButton=this->findChild<QPushButton*>("newGameButton");
+    connect(ngButton, SIGNAL(clicked()),this,SLOT(newGameButtonClicked()));
+
 
     QGraphicsView *view=this->findChild<QGraphicsView*>("graphicsView");
     view->setScene(diagramScene);
     drawGrid();
+
 }
 
 MainWindow::~MainWindow()
@@ -100,9 +105,28 @@ void MainWindow::placemoves(){
     Triangle t=screenboard->board.moves[screenboard->board.moves.size()-1];
     ScreenTriangle st=screenboard->triangles[t.y][t.x];
     circle->setRect(st.pixX-s/2,st.pixY-s/2,s,s);
-    circle->setBrush(QColor::fromRgbF(0, 0, 0, 1)); //QColor::fromRgbF(0, 1, 0, 1)
+    circle->setBrush(QColor::fromRgbF(1, 1, 1, 1)); //QColor::fromRgbF(0, 1, 0, 1)
     diagramScene->addItem(circle);
 
     updatescore();
 }
-
+void MainWindow::newGameButtonClicked(){
+    newGameDialog = new NewGameDialog(this);
+    connect(newGameDialog, SIGNAL(makenewgame(int,int)),this,SLOT(makeNewGame(int,int)));
+    newGameDialog->show();
+}
+void MainWindow::makeNewGame(int sideLength,int unitSize){
+    delete screenboard;
+    screenboard=new ScreenBoard(sideLength,unitSize);
+    connect(diagramScene, SIGNAL(released(int,int)),this->screenboard,SLOT(clickevent(int,int)));
+    connect(screenboard, SIGNAL(modifiedmoves()),this,SLOT(placemoves()));
+    connect(screenboard, SIGNAL(modifiedscore()),this,SLOT(updatescore()));
+    QPushButton *undoButton=this->findChild<QPushButton*>("undoButton");
+    connect(undoButton, SIGNAL(clicked()),screenboard,SLOT(undo()));
+    QPushButton *passButton=this->findChild<QPushButton*>("passButton");
+    connect(passButton, SIGNAL(clicked()),screenboard,SLOT(pass()));
+    QPushButton *scoreButton=this->findChild<QPushButton*>("scoreButton");
+    connect(scoreButton, SIGNAL(clicked()),screenboard,SLOT(score()));
+    diagramScene->clear();
+    drawGrid();
+}

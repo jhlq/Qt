@@ -2,10 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "screenboard.h"
 
 class DiagramScene;
-//class DiagramItem;
+class NewGameDialog;
+class ScreenBoard;
 
 namespace Ui {
 class MainWindow;
@@ -29,9 +29,12 @@ private slots:
     void drawGrid();
     void placemoves();
     void updatescore();
+    void newGameButtonClicked();
+    void makeNewGame(int sideLength,int unitSize);
 
 private:
     DiagramScene *diagramScene;
+    NewGameDialog *newGameDialog;
 };
 
 #endif // MAINWINDOW_H

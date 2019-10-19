@@ -29,6 +29,7 @@ bool Board::isValidMove(int x,int y,int player){
     Triangle t=Triangle(x,y,player);
     return isValidMove(t);
 }
+//#include <iostream>
 bool Board::isValidMove(const Triangle &t){ //refactor?
     if (!tg.has(t.x,t.y) || tg.get(t.x,t.y).player!=0){
         return false;
@@ -38,14 +39,16 @@ bool Board::isValidMove(const Triangle &t){ //refactor?
     Triangle tri=bc.tg.get(t.x,t.y);
     std::vector<Triangle> adj=bc.tg.adjacent(tri);
     for (int a=0;a<adj.size();a++){
-            if (adj[a].alive()){
+            if (adj[a].alive()&&adj[a].player!=tri.player){
             std::vector<Triangle> g=bc.tg.getGroup(adj[a]); //put this in a function?
+            //std::cout<<g.size()<<","<<g[0].x<<" "<<g[0].y<<","<<bc.tg.liberties(g)<<std::endl;
             if (bc.tg.liberties(g)==0){
                 bc.tg.removeGroup(g,tri);
             }
         }
     }
     std::vector<Triangle> group=tg.getGroup(tri);
+    //std::cout<<"lib: "<<bc.tg.liberties(group)<<std::endl;
     if (bc.tg.liberties(group)==0){
         return false;
     }
@@ -87,7 +90,7 @@ bool Board::placeMove(int x,int y,int p){
     Triangle tri=tg.get(x,y);
     std::vector<Triangle> adj=tg.adjacent(tri);
     for (int a=0;a<adj.size();a++){
-            if (adj[a].alive()){
+            if (adj[a].alive()&&adj[a].player!=tri.player){
             std::vector<Triangle> g=tg.getGroup(adj[a]); //put this in a function?
             if (tg.liberties(g)==0){
                 captures[p-1]+=g.size();

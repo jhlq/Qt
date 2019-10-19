@@ -1,6 +1,6 @@
-set(project_sources mainwindow.cpp main.cpp diagramscene.cpp screentriangle.cpp screenboard.cpp)
-set(project_headers mainwindow.h diagramscene.h screentriangle.h screenboard.h)
-set(project_ui mainwindow.ui)
+set(project_sources mainwindow.cpp main.cpp diagramscene.cpp screentriangle.cpp screenboard.cpp newgamedialog.cpp)
+set(project_headers mainwindow.h diagramscene.h screentriangle.h screenboard.h newgamedialog.h)
+set(project_ui mainwindow.ui newgamedialog.ui)
 # wrap the ui file to a c++ header
 qt5_wrap_ui(ui_wrap ${project_ui})
 qt5_wrap_cpp(moc_sources ${project_headers})

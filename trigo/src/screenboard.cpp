@@ -3,6 +3,10 @@
 
 #define PI 3.14159265
 
+//ScreenBoard::ScreenBoard(int sideLength, int _unitSize){
+//    ScreenBoard(sideLength,_unitSize,50,50);
+//}
+
 ScreenBoard::ScreenBoard(int sideLength, int _unitSize, int _offsetX, int _offsetY)
     : board(sideLength)
 {
