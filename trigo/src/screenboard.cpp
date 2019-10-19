@@ -3,7 +3,7 @@
 
 #define PI 3.14159265
 
-ScreenBoard::ScreenBoard(int sideLength, int _unitSize=30, int _offsetX=0, int _offsetY=0)
+ScreenBoard::ScreenBoard(int sideLength, int _unitSize, int _offsetX, int _offsetY)
     : board(sideLength)
 {
 //    board=Board(sideLength);
@@ -56,9 +56,12 @@ void ScreenBoard::clickevent(int pixX, int pixY){
                 if (board.tg.get(tri.x,tri.y).player==0){
                     bool success=board.placeMove(tri.x,tri.y);
                     if (success){
-                        emit placedmove();
+                        emit modifiedmoves();
                     }
                     break;
+                } else {
+                    board.markDeadStones(tri.x,tri.y);
+                    emit modifiedmoves();
                 }
             }
         }
@@ -66,4 +69,15 @@ void ScreenBoard::clickevent(int pixX, int pixY){
             break;
         }
     }
+}
+void ScreenBoard::undo(){
+    board.undo();
+    emit modifiedmoves();
+}
+void ScreenBoard::pass(){
+    board.pass();
+}
+void ScreenBoard::score(){
+    board.score();
+    emit modifiedscore();
 }

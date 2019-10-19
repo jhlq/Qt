@@ -20,9 +20,14 @@ public:
     ScreenTriangle makeTriangle(int x,int y);
     void setUpGrid();
 signals:
-    void placedmove();
+    //void placedmove();
+    void modifiedmoves();
+    void modifiedscore();
 private slots:
     void clickevent(int pixX,int pixY);
+    void undo();
+    void pass();
+    void score();
 };
 
 #endif // SCREENBOARD_H

@@ -92,10 +92,14 @@ BOOST_AUTO_TEST_CASE(testscore)
 {
     Board board=Board(7);
     board.placeMove(1,0);
-    board.placeMove(3,3);
     BOOST_CHECK_EQUAL(board.stones[0],1);
+    board.placeMove(3,3);
+    BOOST_CHECK_EQUAL(board.stones[1],1);
     board.score();
     BOOST_CHECK_EQUAL(board.territory[0],1);
+    board.placeMove(0,6);
+    board.placeMove(1,5);
+    BOOST_CHECK_EQUAL(board.captures[1],1);
 }
 BOOST_AUTO_TEST_CASE(testmark)
 {
@@ -107,4 +111,21 @@ BOOST_AUTO_TEST_CASE(testmark)
     board.markDeadStones(1,0);
     BOOST_CHECK_EQUAL(board.stones[0],0);
     BOOST_CHECK_EQUAL(board.captures[1],2);
+    board.markDeadStones(1,0);
+    BOOST_CHECK_EQUAL(board.stones[0],2);
+    BOOST_CHECK_EQUAL(board.captures[1],0);
+    board.markDeadStones(3,3);
+    BOOST_CHECK_EQUAL(board.stones[1],0);
+    BOOST_CHECK_EQUAL(board.captures[0],1);
+    board.markDeadStones(1,0);
+    BOOST_CHECK_EQUAL(board.stones[0],0);
+    BOOST_CHECK_EQUAL(board.captures[1],2);
+    board.markDeadStones(1,0);
+    BOOST_CHECK_EQUAL(board.stones[1],0);
+    BOOST_CHECK_EQUAL(board.captures[0],1);
+    board.markDeadStones(3,3);
+    BOOST_CHECK_EQUAL(board.stones[0],2);
+    BOOST_CHECK_EQUAL(board.captures[1],0);
+    BOOST_CHECK_EQUAL(board.stones[1],1);
+    BOOST_CHECK_EQUAL(board.captures[0],0);
 }

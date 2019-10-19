@@ -11,23 +11,21 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    screenboard=new ScreenBoard(7,30,0,0);
+    screenboard=new ScreenBoard(7,30,50,50);
     diagramScene = new DiagramScene();
     diagramScene->setSceneRect(QRect(0, 0, 600, 500));
 
-    //connect(diagramScene, SIGNAL(released(int,int)),this,SLOT(addCircle(int,int)));
     connect(diagramScene, SIGNAL(released(int,int)),this->screenboard,SLOT(clickevent(int,int)));
-    connect(screenboard, SIGNAL(placedmove()),this,SLOT(placemoves()));
-    /*QGraphicsRectItem *rect=new QGraphicsRectItem();
-    rect->setRect(0,0,100,100);
-    diagramScene->addItem(rect);
-    QGraphicsEllipseItem *c=new QGraphicsEllipseItem();
-    c->setRect(0,0,200,150);
-    diagramScene->addItem(c);
-    QGraphicsLineItem *l=new QGraphicsLineItem(1,1,300,600);
-    diagramScene->addItem(l);*/
+    connect(screenboard, SIGNAL(modifiedmoves()),this,SLOT(placemoves()));
+    connect(screenboard, SIGNAL(modifiedscore()),this,SLOT(updatescore()));
+    QPushButton *undoButton=this->findChild<QPushButton*>("undoButton");
+    connect(undoButton, SIGNAL(clicked()),screenboard,SLOT(undo()));
+    QPushButton *passButton=this->findChild<QPushButton*>("passButton");
+    connect(passButton, SIGNAL(clicked()),screenboard,SLOT(pass()));
+    QPushButton *scoreButton=this->findChild<QPushButton*>("scoreButton");
+    connect(scoreButton, SIGNAL(clicked()),screenboard,SLOT(score()));
 
-    QGraphicsView *view =this->findChild<QGraphicsView*>("graphicsView");
+    QGraphicsView *view=this->findChild<QGraphicsView*>("graphicsView");
     view->setScene(diagramScene);
     drawGrid();
 }
@@ -66,6 +64,16 @@ void MainWindow::drawGrid(){
         }
     }
 }
+void MainWindow::updatescore(){
+    std::string s="Green: "+std::to_string(screenboard->board.stones[0])+" stones, "+
+            std::to_string(screenboard->board.captures[0])+" captures and "+
+            std::to_string(screenboard->board.territory[0])+" territory.\n";
+    s+="Blue: "+std::to_string(screenboard->board.stones[1])+" stones, "+
+            std::to_string(screenboard->board.captures[1])+" captures and "+
+            std::to_string(screenboard->board.territory[1])+" territory.\n";
+    QLabel *scorelabel=this->findChild<QLabel*>("scoreLabel");
+    scorelabel->setText(QString::fromStdString(s));
+}
 void MainWindow::placemoves(){
     diagramScene->clear();
     drawGrid();
@@ -77,7 +85,24 @@ void MainWindow::placemoves(){
             Triangle t=screenboard->board.tg.get(tri.x,tri.y);
             if (t.player>0){
                 addCircle(tri.pixX,tri.pixY,t.player);
+                if (t.markedDead){
+                    QGraphicsEllipseItem *circle=new QGraphicsEllipseItem();
+                    double s=screenboard->unitSize/2;
+                    circle->setRect(tri.pixX-s/2,tri.pixY-s/2,s,s);
+                    circle->setBrush(QColor::fromRgbF(1, 0, 0, 1));
+                    diagramScene->addItem(circle);
+                }
             }
         }
     }
+    QGraphicsEllipseItem *circle=new QGraphicsEllipseItem();
+    double s=screenboard->unitSize/3;
+    Triangle t=screenboard->board.moves[screenboard->board.moves.size()-1];
+    ScreenTriangle st=screenboard->triangles[t.y][t.x];
+    circle->setRect(st.pixX-s/2,st.pixY-s/2,s,s);
+    circle->setBrush(QColor::fromRgbF(0, 0, 0, 1)); //QColor::fromRgbF(0, 1, 0, 1)
+    diagramScene->addItem(circle);
+
+    updatescore();
 }
+

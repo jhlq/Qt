@@ -28,6 +28,7 @@ private slots:
     void addCircle(int x,int y,int player);
     void drawGrid();
     void placemoves();
+    void updatescore();
 
 private:
     DiagramScene *diagramScene;

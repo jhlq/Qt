@@ -117,6 +117,10 @@ void Board::undo(){
         placeMoves();
     }
 }
+void Board::pass(){
+    switchPlayer();
+}
+
 void Board::score(){
     std::vector<Triangle> checked;
     int scores[2]={0,0};
@@ -162,8 +166,10 @@ void Board::markDeadStones(const Triangle &tri){
     }
     for (int i=0;i<c.size();i++){
         Triangle t=c[i];
-        tg.triangles[t.y][t.x].markedDead=dead;
-        stones[t.player-1]-=a;
-        captures[otherPlayer(t.player)-1]+=a;
+        if (t.player==tri.player){
+            tg.triangles[t.y][t.x].markedDead=dead;
+            stones[t.player-1]-=a;
+            captures[otherPlayer(t.player)-1]+=a;
+        }
     }
 }

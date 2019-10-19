@@ -22,6 +22,7 @@ public:
     std::vector<Triangle> moves;
     void placeMoves();
     void undo();
+    void pass();
     void score();
     void markDeadStones(int x,int y);
     void markDeadStones(const Triangle &tri);
