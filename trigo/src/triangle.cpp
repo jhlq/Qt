@@ -14,6 +14,12 @@ Triangle::Triangle(int x,int y,int player)
     this->player=player;
     this->markedDead=false;
 }
+bool Triangle::isPass(){
+    if (x<0){
+        return true;
+    }
+    return false;
+}
 
 bool Triangle::alive(){
     return player>0 && !markedDead;

@@ -212,7 +212,7 @@ int TriangleGrid::liberties(const Triangle &tri){
 //void TriangleGrid::addCaptured(int x, int y, Triangle &captured){
 //    triangles[y][x].captured.push_back(captured);
 //}
-void TriangleGrid::removeGroup(std::vector<Triangle> &group,Triangle &capturer){
+void TriangleGrid::removeGroup(std::vector<Triangle> &group){
     for (int n=0;n<group.size();n++){
         //group[n].prevPlayer=group[n].player; //remove multiple indexing? Currently supports removing a mixed group...
         //group[n].player=0;

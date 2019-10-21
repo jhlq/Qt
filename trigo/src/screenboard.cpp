@@ -82,6 +82,7 @@ void ScreenBoard::undo(){
 }
 void ScreenBoard::pass(){
     board.pass();
+    emit modifiedmoves();
 }
 void ScreenBoard::score(){
     board.score();

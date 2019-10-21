@@ -13,6 +13,7 @@ public:
     bool markedDead;
 
     bool alive();
+    bool isPass();
     bool sameTenantAs(const Triangle &t);
     bool operator==(const Triangle& t);
 };

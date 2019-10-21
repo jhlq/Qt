@@ -25,6 +25,22 @@ void Board::reset(){
     territory[0]=0;
     territory[1]=0;
 }
+void Board::removeCapturedBy(const Triangle tri){
+    //Triangle tri=tg.get(x,y);
+    std::vector<Triangle> adj=tg.adjacent(tri);
+    for (int a=0;a<adj.size();a++){
+        int ap=adj[a].player;
+        if (adj[a].alive()&&ap!=tri.player){
+            std::vector<Triangle> g=tg.getGroup(adj[a]);
+            if (tg.liberties(g)==0){
+                tg.removeGroup(g);
+                stones[ap-1]-=g.size();
+                captures[tri.player-1]+=g.size();
+            }
+        }
+    }
+}
+
 bool Board::isValidMove(int x,int y,int player){
     Triangle t=Triangle(x,y,player);
     return isValidMove(t);
@@ -36,16 +52,17 @@ bool Board::isValidMove(const Triangle &t){ //refactor?
     Board bc=Board(*this);
     bc.tg.set(t.x,t.y,t.player);
     Triangle tri=bc.tg.get(t.x,t.y);
+    //bc.removeCapturedBy(tri);
     std::vector<Triangle> adj=bc.tg.adjacent(tri);
     for (int a=0;a<adj.size();a++){
             if (adj[a].alive()&&adj[a].player!=tri.player){
-            std::vector<Triangle> g=bc.tg.getGroup(adj[a]); //put this in a function?
+            std::vector<Triangle> g=bc.tg.getGroup(adj[a]);
             if (bc.tg.liberties(g)==0){
-                bc.tg.removeGroup(g,tri);
+                bc.tg.removeGroup(g);
             }
         }
     }
-    std::vector<Triangle> group=tg.getGroup(tri);
+    std::vector<Triangle> group=bc.tg.getGroup(tri);
     if (bc.tg.liberties(group)==0){
         return false;
     }
@@ -80,12 +97,17 @@ bool Board::placeMove(int x,int y){
     return b;
 }
 bool Board::placeMove(int x,int y,int p){
+    if (x<0){ //pass
+        moves.push_back(Triangle(x,y,p));
+        return true;
+    }
     if (!isValidMove(x,y,p)){
         return false;
     }
     tg.set(x,y,p);
     Triangle tri=tg.get(x,y);
-    std::vector<Triangle> adj=tg.adjacent(tri);
+    removeCapturedBy(tri);
+    /*std::vector<Triangle> adj=tg.adjacent(tri);
     for (int a=0;a<adj.size();a++){
             if (adj[a].alive()&&adj[a].player!=tri.player){
             std::vector<Triangle> g=tg.getGroup(adj[a]); //put this in a function?
@@ -94,7 +116,7 @@ bool Board::placeMove(int x,int y,int p){
                 tg.removeGroup(g,tri);
             }
         }
-    }
+    }*/
     history.push_back(tg.historyString());
     moves.push_back(tri);
     stones[p-1]+=1;
@@ -118,6 +140,7 @@ void Board::undo(){
     }
 }
 void Board::pass(){
+    moves.push_back(Triangle(-1,-1,player));
     switchPlayer();
 }
 

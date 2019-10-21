@@ -27,7 +27,7 @@ public:
     std::vector<Triangle> getCluster(const Triangle &tri);
     int liberties(const std::vector<Triangle> &group);
     int liberties(const Triangle &tri);
-    void removeGroup(std::vector<Triangle> &group,Triangle &capturer);
+    void removeGroup(std::vector<Triangle> &group);
     std::string historyString();
 };
 

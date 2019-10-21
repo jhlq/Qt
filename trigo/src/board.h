@@ -30,6 +30,8 @@ public:
     int stones[2];
     int captures[2];
     int territory[2];
+private:
+    void removeCapturedBy(const Triangle tri);
 };
 
 #endif // BOARD_H

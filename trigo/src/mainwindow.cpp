@@ -12,10 +12,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    screenboard=new ScreenBoard(7,30);
+    screenboard=new ScreenBoard(9,30);
     diagramScene = new DiagramScene();
     diagramScene->setSceneRect(QRect(0, 0, 600, 500));
 
+    //connect all screenboard
     connect(diagramScene, SIGNAL(released(int,int)),this->screenboard,SLOT(clickevent(int,int)));
     connect(screenboard, SIGNAL(modifiedmoves()),this,SLOT(placemoves()));
     connect(screenboard, SIGNAL(modifiedscore()),this,SLOT(updatescore()));
@@ -25,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(passButton, SIGNAL(clicked()),screenboard,SLOT(pass()));
     QPushButton *scoreButton=this->findChild<QPushButton*>("scoreButton");
     connect(scoreButton, SIGNAL(clicked()),screenboard,SLOT(score()));
+
+
     QPushButton *ngButton=this->findChild<QPushButton*>("newGameButton");
     connect(ngButton, SIGNAL(clicked()),this,SLOT(newGameButtonClicked()));
 
@@ -101,13 +104,15 @@ void MainWindow::placemoves(){
         }
     }
     if (!screenboard->board.moves.empty()){
-        QGraphicsEllipseItem *circle=new QGraphicsEllipseItem();
-        double s=screenboard->unitSize/3;
         Triangle t=screenboard->board.moves[screenboard->board.moves.size()-1];
-        ScreenTriangle st=screenboard->triangles[t.y][t.x];
-        circle->setRect(st.pixX-s/2,st.pixY-s/2,s,s);
-        circle->setBrush(QColor::fromRgbF(1, 1, 1, 1)); //QColor::fromRgbF(0, 1, 0, 1)
-        diagramScene->addItem(circle);
+        if (!t.isPass()){
+            QGraphicsEllipseItem *circle=new QGraphicsEllipseItem();
+            double s=screenboard->unitSize/3;
+            ScreenTriangle st=screenboard->triangles[t.y][t.x];
+            circle->setRect(st.pixX-s/2,st.pixY-s/2,s,s);
+            circle->setBrush(QColor::fromRgbF(1, 1, 1, 1)); //QColor::fromRgbF(0, 1, 0, 1)
+            diagramScene->addItem(circle);
+        }
     }
 
     updatescore();
@@ -131,4 +136,5 @@ void MainWindow::makeNewGame(int sideLength,int unitSize){
     connect(scoreButton, SIGNAL(clicked()),screenboard,SLOT(score()));
     diagramScene->clear();
     drawGrid();
+    updatescore();
 }

@@ -61,6 +61,8 @@ BOOST_AUTO_TEST_CASE(test4)
     //BOOST_CHECK_EQUAL(board.tg.get(3,3).prevPlayer,1);
     //BOOST_CHECK_EQUAL(board.tg.get(2,4).captured.size(),1);
     BOOST_CHECK_EQUAL(board.captures[1],1);
+    BOOST_CHECK_EQUAL(board.stones[1],3);
+    BOOST_CHECK_EQUAL(board.stones[0],0);
 }
 BOOST_AUTO_TEST_CASE(testko)
 {
@@ -85,8 +87,12 @@ BOOST_AUTO_TEST_CASE(testundo)
     board.placeMove(4,0);
     board.placeMove(5,0);
     BOOST_CHECK_EQUAL(board.tg.get(4,0).player,0);
+    BOOST_CHECK_EQUAL(board.stones[1],0);
+    BOOST_CHECK_EQUAL(board.stones[0],2);
     board.undo();
     BOOST_CHECK_EQUAL(board.tg.get(4,0).player,2);
+    BOOST_CHECK_EQUAL(board.stones[1],1);
+    BOOST_CHECK_EQUAL(board.stones[0],1);
 }
 BOOST_AUTO_TEST_CASE(testscore)
 {
