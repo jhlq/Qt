@@ -6,6 +6,10 @@
 #include "newgamedialog.h"
 #include <QGraphicsItem>
 
+#include <fstream>
+#include <locale>
+//#include <boost/lexical_cast.hpp>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -30,7 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QPushButton *ngButton=this->findChild<QPushButton*>("newGameButton");
     connect(ngButton, SIGNAL(clicked()),this,SLOT(newGameButtonClicked()));
-
+    QPushButton *markButton=this->findChild<QPushButton*>("markButton");
+    connect(markButton, SIGNAL(clicked()),this,SLOT(saveTrainingExample()));
 
     QGraphicsView *view=this->findChild<QGraphicsView*>("graphicsView");
     view->setScene(diagramScene);
@@ -137,4 +142,22 @@ void MainWindow::makeNewGame(int sideLength,int unitSize){
     diagramScene->clear();
     drawGrid();
     updatescore();
+}
+
+struct Dot final : std::numpunct<char>
+{
+    char do_decimal_point() const override { return '.'; }
+};
+void MainWindow::saveTrainingExample(){
+    double target=ui->markSlider->value();
+    target=target/100;
+    //std::string targetstr=std::to_string(target); //boost::lexical_cast<std::string>(target);
+    std::string s=screenboard->board.state();
+    //s+=targetstr+";\n";
+    std::ofstream datafile;
+    datafile.imbue(std::locale(std::locale::classic(), new Dot));
+    datafile.open("trainingData.txt",std::ios_base::app);
+    //datafile << s;
+    datafile<<s<<target<<";\n";
+    datafile.close();
 }

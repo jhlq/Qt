@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Trigo</string>
   </property>
+  <property name="toolTip">
+   <string/>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
@@ -51,6 +54,61 @@
          <widget class="QPushButton" name="scoreButton">
           <property name="text">
            <string>Score</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item alignment="Qt::AlignHCenter">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>AI tools:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="markButton">
+          <property name="toolTip">
+           <string>Saves the current move as a training example.</string>
+          </property>
+          <property name="text">
+           <string>Mark move</string>
+          </property>
+         </widget>
+        </item>
+        <item alignment="Qt::AlignHCenter">
+         <widget class="QSlider" name="markSlider">
+          <property name="toolTip">
+           <string>Output target for training data.</string>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="minimum">
+           <number>-100</number>
+          </property>
+          <property name="maximum">
+           <number>100</number>
+          </property>
+          <property name="value">
+           <number>70</number>
+          </property>
+          <property name="sliderPosition">
+           <number>70</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="tickPosition">
+           <enum>QSlider::TicksAbove</enum>
+          </property>
+          <property name="tickInterval">
+           <number>50</number>
           </property>
          </widget>
         </item>
