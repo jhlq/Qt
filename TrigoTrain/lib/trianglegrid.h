@@ -24,6 +24,7 @@ public:
     std::vector<Triangle> getConnected(const Triangle &tri);
     std::vector<Triangle> getGroup(const Triangle &tri);
     std::vector<Triangle> getCluster(const std::vector<Triangle> &group);
+    std::vector<Triangle> getCluster(int x,int y);
     std::vector<Triangle> getCluster(const Triangle &tri);
     int liberties(const std::vector<Triangle> &group);
     int liberties(const Triangle &tri);

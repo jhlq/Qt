@@ -77,7 +77,7 @@
            <string>Saves the current move as a training example.</string>
           </property>
           <property name="text">
-           <string>Mark move</string>
+           <string>Save move</string>
           </property>
          </widget>
         </item>

@@ -191,6 +191,9 @@ std::vector<Triangle> TriangleGrid::getCluster(const std::vector<Triangle> &grou
     }
     return cluster;
 }
+std::vector<Triangle> TriangleGrid::getCluster(int x,int y){
+    return getCluster(get(x,y));
+}
 std::vector<Triangle> TriangleGrid::getCluster(const Triangle &tri){
     std::vector<Triangle> g=getGroup(tri);
     return getCluster(g);

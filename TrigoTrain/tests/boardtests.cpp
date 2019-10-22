@@ -142,3 +142,13 @@ BOOST_AUTO_TEST_CASE(teststate)
     std::string s=board.state();
     BOOST_CHECK_EQUAL(s,"7;1,0,1;");
 }
+BOOST_AUTO_TEST_CASE(testcluster)
+{
+    Board board=Board(9);
+    board.placeMove(2,1);
+    board.placeMove(5,5);
+    board.placeMove(4,1);
+    std::vector<Triangle> c=board.tg.getCluster(2,1);
+    int l=board.tg.liberties(c);
+    BOOST_CHECK_EQUAL(l,5);
+}
