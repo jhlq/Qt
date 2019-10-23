@@ -1,11 +1,15 @@
 #include <QApplication>
 #include "mainwindow.h"
 
-#include <iostream>
-using namespace std;
+#include "sharktrainer.h"
+
+//using namespace std;
 
 int main(int argc, char *argv[]){
 	
+    SharkTrainer st;
+    st.makeData("trainingData.txt","");
+
 	QApplication a(argc, argv);
 	MainWindow w;
 	w.show();

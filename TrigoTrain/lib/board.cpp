@@ -40,14 +40,13 @@ void Board::removeCapturedBy(const Triangle tri){
         }
     }
 }
-
-bool Board::isValidMove(int x,int y,int player){
+int Board::invalidMoveType(int x,int y,int player){
     Triangle t=Triangle(x,y,player);
-    return isValidMove(t);
+    return invalidMoveType(t);
 }
-bool Board::isValidMove(const Triangle &t){ //refactor?
+int Board::invalidMoveType(const Triangle &t){
     if (!tg.has(t.x,t.y) || tg.get(t.x,t.y).player!=0){
-        return false;
+        return 1;
     }
     Board bc=Board(*this);
     bc.tg.set(t.x,t.y,t.player);
@@ -64,10 +63,20 @@ bool Board::isValidMove(const Triangle &t){ //refactor?
     }
     std::vector<Triangle> group=bc.tg.getGroup(tri);
     if (bc.tg.liberties(group)==0){
-        return false;
+        return 2;
     }
     std::string h=bc.tg.historyString();
     if (contains(this->history,h)){
+        return 3;
+    }
+    return 0;
+}
+bool Board::isValidMove(int x,int y,int player){
+    Triangle t=Triangle(x,y,player);
+    return isValidMove(t);
+}
+bool Board::isValidMove(const Triangle &t){
+    if (invalidMoveType(t)>0){
         return false;
     }
     return true;

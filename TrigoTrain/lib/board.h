@@ -12,6 +12,8 @@ public:
     TriangleGrid tg;
     int player;
     void reset();
+    int invalidMoveType(int x,int y,int player);
+    int invalidMoveType(const Triangle &t);
     bool isValidMove(int x,int y,int player);
     bool isValidMove(const Triangle &t);
     int otherPlayer();
