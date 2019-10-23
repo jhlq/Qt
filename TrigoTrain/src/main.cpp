@@ -8,7 +8,9 @@
 int main(int argc, char *argv[]){
 	
     SharkTrainer st;
-    st.makeData("trainingData.txt","");
+    st.makeData(9,"trainingData.txt","");
+    //SharkTrainer::makeData(9,"trainingData.txt","");
+    st.start();
 
 	QApplication a(argc, argv);
 	MainWindow w;

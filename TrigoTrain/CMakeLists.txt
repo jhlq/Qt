@@ -6,8 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets)
 
-#find_package(Shark REQUIRED)
-#include(${SHARK_USE_FILE})
+find_package(Shark REQUIRED)
+include(${SHARK_USE_FILE}) #compile with "-DShark_DIR=/home/quin/Shark/build"
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

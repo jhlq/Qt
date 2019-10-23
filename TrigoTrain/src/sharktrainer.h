@@ -6,7 +6,8 @@ class SharkTrainer
 {
 public:
     SharkTrainer();
-    void makeData(std::string inputfile,std::string outputfile);
+    void makeData(int sideLength,std::string inputfile,std::string outputfile);
+    void start();
 };
 
 #endif // SHARKTRAINER_H

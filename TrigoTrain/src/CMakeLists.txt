@@ -12,10 +12,11 @@ add_executable(TrigoTrain
 	${project_headers}
 	${ui_wrap} 
 	${moc_sources})
+#set_property(TARGET TrigoTrain PROPERTY CXX_STANDARD 11)
 target_link_libraries (TrigoTrain
     PUBLIC
     BoardLib
 	Qt5::Core
 	Qt5::Gui 
-	Qt5::Widgets)
-#   ${SHARK_LIBRARIES})
+        Qt5::Widgets
+   ${SHARK_LIBRARIES})
