@@ -45,7 +45,10 @@ int Board::invalidMoveType(int x,int y,int player){
     return invalidMoveType(t);
 }
 int Board::invalidMoveType(const Triangle &t){
-    if (!tg.has(t.x,t.y) || tg.get(t.x,t.y).player!=0){
+    if (!tg.has(t.x,t.y)){
+        return 4;
+    }
+    if (tg.get(t.x,t.y).player!=0){
         return 1;
     }
     Board bc=Board(*this);

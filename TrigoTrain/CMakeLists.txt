@@ -11,8 +11,8 @@ include(${SHARK_USE_FILE}) #compile with "-DShark_DIR=/home/quin/Shark/build"
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-enable_testing ()
-add_subdirectory (tests)
+#enable_testing ()
+#add_subdirectory (tests)
 add_subdirectory (src) 
 add_subdirectory (lib) 
 
