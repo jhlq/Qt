@@ -37,6 +37,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QPushButton *markButton=this->findChild<QPushButton*>("markButton");
     connect(markButton, SIGNAL(clicked()),this,SLOT(saveTrainingExample()));
 
+    QPushButton *emButton=this->findChild<QPushButton*>("evalMoveButton");
+    connect(emButton, SIGNAL(clicked()),this,SLOT(evaluateMove()));
+    QPushButton *reinitButton=this->findChild<QPushButton*>("reinitButton");
+    connect(reinitButton, SIGNAL(clicked()),this,SLOT(reinitializest()));
+
     QGraphicsView *view=this->findChild<QGraphicsView*>("graphicsView");
     view->setScene(diagramScene);
     drawGrid();
@@ -151,13 +156,21 @@ struct Dot final : std::numpunct<char>
 void MainWindow::saveTrainingExample(){
     double target=ui->markSlider->value();
     target=target/100;
-    //std::string targetstr=std::to_string(target); //boost::lexical_cast<std::string>(target);
     std::string s=screenboard->board.state();
-    //s+=targetstr+";\n";
     std::ofstream datafile;
     datafile.imbue(std::locale(std::locale::classic(), new Dot));
     datafile.open("trainingData.txt",std::ios_base::app);
-    //datafile << s;
     datafile<<s<<target<<";\n";
     datafile.close();
+    Triangle t=screenboard->board.moves.back();
+    std::cout<<"Saved "<<t.x<<", "<<t.y<<", "<<t.player<<": "<<target<<std::endl;
+}
+void MainWindow::evaluateMove(){
+    if (screenboard->board.moves.empty()) return;
+    double e=st.evaluateMove(screenboard->board,screenboard->board.moves.back());
+    QLabel *elabel=this->findChild<QLabel*>("evaluationLabel");
+    elabel->setText(QString::fromStdString(std::to_string(e)));
+}
+void MainWindow::reinitializest(){
+    st.init();
 }

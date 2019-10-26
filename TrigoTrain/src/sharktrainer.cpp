@@ -6,19 +6,20 @@
 #include <iostream>
 //#include <filesystem> //requires standard 17
 // #define WINDOWS  /* uncomment this line to use it for windows.*/
-#ifdef WINDOWS
+/*#ifdef WINDOWS
 #include <direct.h>
 #define GetCurrentDir _getcwd
 #else
 #include <unistd.h>
 #define GetCurrentDir getcwd
-#endif
+#endif */
+#include <boost/filesystem.hpp>
 
 #include <boost/algorithm/string.hpp>
 
 //the model
 //#include <shark/Models/LinearModel.h>//single dense layer
-#include <shark/Models/ConcatenatedModel.h>//for stacking layers, proveides operator>>
+//#include <shark/Models/ConcatenatedModel.h>//for stacking layers, proveides operator>>
 //training the  model
 //#include <shark/ObjectiveFunctions/ErrorFunction.h>//error function, allows for minibatch training
 //#include <shark/ObjectiveFunctions/Loss/CrossEntropy.h> // loss used for supervised training
@@ -32,7 +33,40 @@ SharkTrainer::SharkTrainer()
 {
 
 }
-void SharkTrainer::makeData(int sideLength,std::string inputfile, std::string outputfile){
+RealVector SharkTrainer::makeEvalVector(Board board,Triangle move){
+    int inputlength=board.tg.sideLength*board.tg.sideLength*6+2;
+    RealVector input(inputlength,0);
+    int n=0;
+    for (int yi=0;yi<board.tg.triangles.size();yi++){
+        for (int xi=0;xi<board.tg.triangles[yi].size();xi++){
+            Triangle t=board.tg.get(xi,yi);
+            if (t==move){
+                input[n]=1;
+            } else if (t.player>0){
+                if (t.player==move.player){
+                    input[n+1]=1;
+                } else {
+                    input[n+2]=1;
+                }
+                //input[n+t.player]=1;
+            } else {
+                int imt=board.invalidMoveType(t.x,t.y,move.player);
+                if (imt>1){
+                    input[n+imt+1]=1;
+                }
+            }
+            n+=6;
+        }
+    }
+    if (move.isPass()){
+        input[n]=1;
+    }
+    if (move.player==2){
+        input[n+1]=1;
+    }
+    return input;
+}
+void SharkTrainer::makeData(int sideLength,std::string inputfile){
     std::ifstream file;
     file.open (inputfile);
     std::string line;
@@ -59,17 +93,14 @@ void SharkTrainer::makeData(int sideLength,std::string inputfile, std::string ou
                     Triangle t=Triangle(std::stoi(strs2[0]),std::stoi(strs2[1]),std::stoi(strs2[2]));
                     moves.push_back(t);
                 }
-                //std::cout<<"moves: "<<moves.size()<<" target: "<<target<<std::endl;
+                Triangle markedmove=moves.back();
+                moves.pop_back();
                 Board board(sideLength);
                 board.moves=moves;
-                Triangle markedmove=board.moves[board.moves.size()-1];
-                board.player=board.otherPlayer(markedmove.player);
+                //Triangle markedmove=board.moves[board.moves.size()-1];
+                board.player=markedmove.player;//board.otherPlayer(markedmove.player);
                 board.placeMoves();
-                //int input [inputlength]={};
-                //for (int il=0;il<inputlength;il++){
-                //    input[il]=0;
-                //}
-                std::vector<int> input(inputlength,0);
+                std::vector<int> input(inputlength,0); //replace with RealVector and use makeEvalVector?
                 int n=0;
                 for (int yi=0;yi<board.tg.triangles.size();yi++){
                     for (int xi=0;xi<board.tg.triangles[yi].size();xi++){
@@ -77,9 +108,14 @@ void SharkTrainer::makeData(int sideLength,std::string inputfile, std::string ou
                         if (t==markedmove){
                             input[n]=1;
                         } else if (t.player>0){
-                            input[n+t.player]=1;
+                            if (t.player==markedmove.player){
+                                input[n+1]=1;
+                            } else {
+                                input[n+2]=1;
+                            }
+                            //input[n+t.player]=1;
                         } else {
-                            int imt=board.invalidMoveType(t.x,t.y,board.player);
+                            int imt=board.invalidMoveType(t.x,t.y,markedmove.player);
                             if (imt>1){
                                 input[n+imt+1]=1;
                             }
@@ -90,7 +126,7 @@ void SharkTrainer::makeData(int sideLength,std::string inputfile, std::string ou
                 if (markedmove.isPass()){
                     input[n]=1;
                 }
-                if (board.player==2){
+                if (markedmove.player==2){
                     input[n+1]=1;
                 }
                 arrays.push_back(input);
@@ -134,46 +170,91 @@ RegressionDataset SharkTrainer::loadData(const std::string& dataFile,const std::
                 importCSV(inputs, dataFile);
                 importCSV(labels, labelFile);
         } catch (Exception exc) {
-            char buff[FILENAME_MAX];
-            GetCurrentDir( buff, FILENAME_MAX );
-            std::string current_working_dir(buff);
-                std::cerr << "Unable to open file " <<  dataFile << " and/or " << labelFile <<
+            //char buff[FILENAME_MAX];
+            //GetCurrentDir( buff, FILENAME_MAX );
+            //std::string current_working_dir(buff);
+            boost::filesystem::path current_working_dir=boost::filesystem::current_path();
+            std::cerr << "Unable to open file " <<  dataFile << " and/or " << labelFile <<
                              ". Check paths! Current dir is " << current_working_dir << " Exception: " <<exc.what()<< std::endl;
-                exit(EXIT_FAILURE);
+            exit(EXIT_FAILURE);
         }
         //now we create a complete dataset which represents pairs of inputs and labels
-        RegressionDataset data(inputs, labels);
-        return data;
+        //RegressionDataset data(inputs, labels);
+        //dataset=data;
+        dataset=RegressionDataset(inputs,labels);
+        return dataset;
+}
+void SharkTrainer::makeModel(){
+    //typedef LinearModel<RealVector, RectifierNeuron> DenseLayer;
+
+    //build the network
+    int hidden1=300;
+    int hidden2=500;
+    //DenseLayer layer1(dataset.inputShape(),hidden1);
+    //DenseLayer layer2(layer1.outputShape(),hidden2);
+    //LinearModel<RealVector> output(layer2.outputShape(),1);
+    //auto network = layer1 >> layer2 >> output;
+    //initRandomNormal(network,0.001);
+    //model=network;
+    layer1=DenseLayer(dataset.inputShape(),hidden1);
+    layer2=DenseLayer(layer1.outputShape(),hidden2);
+    output=LinearModel<RealVector>(layer2.outputShape(),1);
+    model= layer1 >> layer2 >> output;
+    initRandomNormal(model,0.001);
+}
+void SharkTrainer::trainModel(){
+
+
+    //RegressionDataset data = loadData("inputs.csv","labels.csv");
+    SquaredLoss<> loss;
+    ErrorFunction<> errorFunction(dataset, &model, &loss, true);//enable minibatch training
+    CG<> optimizer;
+    errorFunction.init();
+    optimizer.init(errorFunction);
+    for(int i = 0; i < 50; ++i)
+    {
+            optimizer.step(errorFunction);
+            std::cout<<i<<" "<<optimizer.solution().value<<std::endl;
+    }
+    //copy solution parameters into model
+    model.setParameterVector(optimizer.solution().point);
+}
+void SharkTrainer::init(){
+    makeData(9,"trainingData.txt");
+    loadData("inputs.csv","labels.csv");
+    makeModel();
+    trainModel();
 }
 void SharkTrainer::start(){
     //load data
-    RegressionDataset data = loadData("inputs.csv","labels.csv");
+    //RegressionDataset data = loadData("inputs.csv","labels.csv");
     //We use a dense linear model with rectifier activations
-    typedef LinearModel<RealVector, RectifierNeuron> DenseLayer;
+    /*typedef LinearModel<RealVector, RectifierNeuron> DenseLayer;
 
     //build the network
     int hidden1=300;
     int hidden2=500;
     DenseLayer layer1(data.inputShape(),hidden1);
     DenseLayer layer2(layer1.outputShape(),hidden2);
-    LinearModel<RealVector> output(layer2.outputShape(),1);
+    LinearModel<RealVector> output(layer2.outputShape(),1); */
 
     //DenseLayer layer1(3,5);
     //DenseLayer layer2(layer1.outputShape(),7);
     //LinearModel<RealVector> output(layer2.outputShape(),1);
-    auto network = layer1 >> layer2 >> output;
+    //auto network = layer1 >> layer2 >> output;
+    //model=network;
     //RealVector t(3);
     //t[1]=1;
     //std::cout<<"Testing network: "<<network(t)<<std::endl;
 
     //create the supervised problem.
     //CrossEntropy loss;
-    SquaredLoss<> loss;
-    ErrorFunction<> errorFunction(data, &network, &loss, true);//enable minibatch training
+    //SquaredLoss<> loss;
+    //ErrorFunction<> errorFunction(data, &network, &loss, true);//enable minibatch training
 
     //optimize the model
     //std::cout<<"training network"<<std::endl;
-    initRandomNormal(network,0.001);
+    //initRandomNormal(network,0.001);
     //std::cout<<"Testing initialized network: "<<network(t)<<std::endl;
     //Adam<> optimizer;
     /*error.init();
@@ -183,7 +264,7 @@ void SharkTrainer::start(){
             std::cout<<i<<" "<<optimizer.solution().value<<std::endl;
     }
     network.setParameterVector(optimizer.solution().point);*/
-
+    /*
     CG<> optimizer;
     errorFunction.init();
     optimizer.init(errorFunction);
@@ -194,5 +275,33 @@ void SharkTrainer::start(){
     }
     //copy solution parameters into model
     network.setParameterVector(optimizer.solution().point);
-
+    */
+    //std::vector<int> v={1,2,3};
+    //RealVector rv({1,2,3});
+    //rv.push_back(4.5);
+    //std::cout<<rv<<std::endl;
+    SharkTrainer st;
+    st.loadData("inputs.csv","labels.csv");
+    std::cout<<"Loaded data."<<std::endl;
+    st.makeModel();
+    std::cout<<"Made model."<<std::endl;
+    RealVector initpass({0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1});
+    RealVector eval1=st.model(initpass);
+    std::cout<<"Model eval: "<<eval1<<std::endl;
+    //std::cout<<"Data: "<<st.dataset<<std::endl;
+    st.trainModel();
+    std::cout<<"Trained."<<std::endl;
+    //RealVector initpass({0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1});
+    //RealVector eval=st.model(initpass);
+    RealVector eval=st.model(initpass);
+    std::cout<<"Pass first? "<<eval<<std::endl;
+    Board b(9);
+    b.placeMove(3,3);
+    RealVector p2=makeEvalVector(b,Triangle(-1,-1,2));
+    eval=st.model(p2);
+    std::cout<<"Pass second? "<<eval<<std::endl;
+}
+double SharkTrainer::evaluateMove(Board b,Triangle move){
+    RealVector rv=makeEvalVector(b,move);
+    return model(rv)[0];
 }

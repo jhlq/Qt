@@ -3,9 +3,13 @@
 
 #include <QMainWindow>
 
+#include "sharktrainer.h"
+
+
 class DiagramScene;
 class NewGameDialog;
 class ScreenBoard;
+//class SharkTrainer;
 
 namespace Ui {
 class MainWindow;
@@ -19,6 +23,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     //double unitSize;
+    SharkTrainer st;
 
 private:
     Ui::MainWindow *ui;
@@ -31,11 +36,14 @@ private slots:
     void newGameButtonClicked();
     void makeNewGame(int sideLength,int unitSize);
     void saveTrainingExample();
+    void evaluateMove();
+    void reinitializest();
 
 private:
     DiagramScene *diagramScene;
     ScreenBoard *screenboard;
     NewGameDialog *newGameDialog;
+
 };
 
 #endif // MAINWINDOW_H

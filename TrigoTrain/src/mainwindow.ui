@@ -71,16 +71,6 @@
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QPushButton" name="markButton">
-          <property name="toolTip">
-           <string>Saves the current move as a training example.</string>
-          </property>
-          <property name="text">
-           <string>Save move</string>
-          </property>
-         </widget>
-        </item>
         <item alignment="Qt::AlignHCenter">
          <widget class="QSlider" name="markSlider">
           <property name="toolTip">
@@ -109,6 +99,37 @@
           </property>
           <property name="tickInterval">
            <number>50</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="markButton">
+          <property name="toolTip">
+           <string>Saves the current move as a training example.</string>
+          </property>
+          <property name="text">
+           <string>Save move</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="evalMoveButton">
+          <property name="text">
+           <string>Evaluate move</string>
+          </property>
+         </widget>
+        </item>
+        <item alignment="Qt::AlignHCenter">
+         <widget class="QLabel" name="evaluationLabel">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="reinitButton">
+          <property name="text">
+           <string>Reinitialize</string>
           </property>
          </widget>
         </item>
