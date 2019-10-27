@@ -1,6 +1,7 @@
 #ifndef SHARKTRAINER_H
 #define SHARKTRAINER_H
 #include <string>
+#include <memory>
 
 #include <shark/Data/Csv.h>
 #include <shark/Algorithms/GradientDescent/CG.h>
@@ -14,7 +15,7 @@ using namespace shark;
 class Board;
 class Triangle;
 
-typedef LinearModel<RealVector, RectifierNeuron> DenseLayer;
+typedef LinearModel<RealVector, FastSigmoidNeuron> DenseLayer;
 
 class SharkTrainer
 {
@@ -33,9 +34,11 @@ public:
 
 
 
-    DenseLayer layer1;
-    DenseLayer layer2;
-    LinearModel<RealVector> output;
+    //DenseLayer layer1;
+    //DenseLayer layer2;
+    //LinearModel<RealVector> output;
+
+    std::vector<std::shared_ptr<AbstractModel<RealVector,RealVector,RealVector>>> layers;
 
 };
 

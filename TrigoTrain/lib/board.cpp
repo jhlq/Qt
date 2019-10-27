@@ -151,8 +151,10 @@ void Board::placeMoves(){
     player=p;
 }
 void Board::undo(){
-    if (!history.empty()){
-        history.pop_back();
+    if (!moves.empty()){
+        if (!moves.back().isPass()){
+            history.pop_back();
+        }
         moves.pop_back();
         switchPlayer();
         placeMoves();
