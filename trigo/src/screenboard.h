@@ -29,6 +29,7 @@ private slots:
     void undo();
     void pass();
     void score();
+    void autoMark();
 };
 
 #endif // SCREENBOARD_H

@@ -6,6 +6,8 @@
 #include "newgamedialog.h"
 #include <QGraphicsItem>
 
+//#include <iostream>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -16,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     diagramScene = new DiagramScene();
     diagramScene->setSceneRect(QRect(0, 0, 700, 600));
 
-    //connect all screenboard
+    //connect all screenboard, remember to add changes in makeNewGame also
     connect(diagramScene, SIGNAL(released(int,int)),this->screenboard,SLOT(clickevent(int,int)));
     connect(screenboard, SIGNAL(modifiedmoves()),this,SLOT(placemoves()));
     connect(screenboard, SIGNAL(modifiedscore()),this,SLOT(updatescore()));
@@ -26,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(passButton, SIGNAL(clicked()),screenboard,SLOT(pass()));
     QPushButton *scoreButton=this->findChild<QPushButton*>("scoreButton");
     connect(scoreButton, SIGNAL(clicked()),screenboard,SLOT(score()));
+    QPushButton *amButton=this->findChild<QPushButton*>("autoMarkButton");
+    connect(amButton, SIGNAL(clicked()),screenboard,SLOT(autoMark()));
 
 
     QPushButton *ngButton=this->findChild<QPushButton*>("newGameButton");
@@ -104,7 +108,7 @@ void MainWindow::placemoves(){
         }
     }
     if (!screenboard->board.moves.empty()){
-        Triangle t=screenboard->board.moves[screenboard->board.moves.size()-1];
+        Triangle t=screenboard->board.moves.back();//[screenboard->board.moves.size()-1];
         if (!t.isPass()){
             QGraphicsEllipseItem *circle=new QGraphicsEllipseItem();
             double s=screenboard->unitSize/3;
@@ -112,6 +116,7 @@ void MainWindow::placemoves(){
             circle->setRect(st.pixX-s/2,st.pixY-s/2,s,s);
             circle->setBrush(QColor::fromRgbF(1, 1, 1, 1)); //QColor::fromRgbF(0, 1, 0, 1)
             diagramScene->addItem(circle);
+            //std::cout<<screenboard->board.tg.getConnectedSpace(screenboard->board.tg.getCluster(t)).size()<<std::endl;
         }
     }
 
@@ -134,6 +139,8 @@ void MainWindow::makeNewGame(int sideLength,int unitSize){
     connect(passButton, SIGNAL(clicked()),screenboard,SLOT(pass()));
     QPushButton *scoreButton=this->findChild<QPushButton*>("scoreButton");
     connect(scoreButton, SIGNAL(clicked()),screenboard,SLOT(score()));
+    QPushButton *amButton=this->findChild<QPushButton*>("autoMarkButton");
+    connect(amButton, SIGNAL(clicked()),screenboard,SLOT(autoMark()));
     diagramScene->clear();
     drawGrid();
     updatescore();

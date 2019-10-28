@@ -11,8 +11,8 @@ find_package(Qt5 COMPONENTS REQUIRED Core Gui Widgets)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-enable_testing ()
-add_subdirectory (tests)
+#enable_testing ()
+#add_subdirectory (tests)
 add_subdirectory (src) 
 #add_test (NAME RunAllTests COMMAND RunAllTests)
 
