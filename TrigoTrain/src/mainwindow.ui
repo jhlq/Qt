@@ -127,6 +127,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="plotAllEvaluationsButton">
+          <property name="text">
+           <string>Plot all evaluations</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="reinitButton">
           <property name="text">
            <string>Reinitialize</string>

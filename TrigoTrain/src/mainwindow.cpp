@@ -39,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QPushButton *emButton=this->findChild<QPushButton*>("evalMoveButton");
     connect(emButton, SIGNAL(clicked()),this,SLOT(evaluateMove()));
+    QPushButton *paeButton=this->findChild<QPushButton*>("plotAllEvaluationsButton");
+    connect(paeButton, SIGNAL(clicked()),this,SLOT(plotAllEvaluations()));
     QPushButton *reinitButton=this->findChild<QPushButton*>("reinitButton");
     connect(reinitButton, SIGNAL(clicked()),this,SLOT(reinitializest()));
 
@@ -64,6 +66,14 @@ void MainWindow::addCircle(int x,int y,int player)
     } else {
         circle->setBrush(Qt::red);
     }
+    diagramScene->addItem(circle);
+}
+void MainWindow::addCircle(int x,int y,double sizemod,double r,double g,double b, double o)
+{
+    QGraphicsEllipseItem *circle=new QGraphicsEllipseItem();
+    double s=screenboard->unitSize/sizemod;
+    circle->setRect(x-s/2,y-s/2,s,s);
+    circle->setBrush(QColor::fromRgbF(r, g, b, o));
     diagramScene->addItem(circle);
 }
 void MainWindow::drawGrid(){
@@ -95,6 +105,7 @@ void MainWindow::updatescore(){
 void MainWindow::placemoves(){
     diagramScene->clear();
     drawGrid();
+    double s=screenboard->unitSize/2;
     int ylen=screenboard->triangles.size();
     for (int yt = 0; yt < ylen; yt++){
         int xlen=screenboard->triangles[yt].size();
@@ -105,7 +116,6 @@ void MainWindow::placemoves(){
                 addCircle(tri.pixX,tri.pixY,t.player);
                 if (t.markedDead){
                     QGraphicsEllipseItem *circle=new QGraphicsEllipseItem();
-                    double s=screenboard->unitSize/2;
                     circle->setRect(tri.pixX-s/2,tri.pixY-s/2,s,s);
                     circle->setBrush(QColor::fromRgbF(1, 0, 0, 1));
                     diagramScene->addItem(circle);
@@ -170,6 +180,34 @@ void MainWindow::evaluateMove(){
     double e=st.evaluateMove(screenboard->board,screenboard->board.moves.back());
     QLabel *elabel=this->findChild<QLabel*>("evaluationLabel");
     elabel->setText(QString::fromStdString(std::to_string(e)));
+}
+void MainWindow::plotAllEvaluations(){
+    double passe=st.evaluateMove(screenboard->board,Triangle(-1,-1,screenboard->board.player));
+    if (passe>0){
+        if (passe>1) passe=1;
+        addCircle(screenboard->offsetX,screenboard->offsetY*3,3,0,passe,0,passe);
+    } else if (passe<0){
+        passe-=2*passe;
+        if (passe>1) passe=1;
+        addCircle(screenboard->offsetX,screenboard->offsetY+screenboard->unitSize*3,3,passe,0,0,passe);
+    }
+    for (int yi=0;yi<screenboard->board.tg.triangles.size();yi++){
+        for (int xi=0;xi<screenboard->board.tg.triangles[yi].size();xi++){
+            Triangle move(xi,yi,screenboard->board.player);
+            if (screenboard->board.isValidMove(move)){
+                double ev=st.evaluateMove(screenboard->board,move);
+                ScreenTriangle tri=screenboard->triangles[yi][xi];
+                if (ev>0){
+                    if (ev>1) ev=1;
+                    addCircle(tri.pixX,tri.pixY,3,0,ev,0,ev);
+                } else if (ev<0){
+                    ev-=2*ev;
+                    if (ev>1) ev=1;
+                    addCircle(tri.pixX,tri.pixY,3,ev,0,0,ev);
+                }
+            }
+        }
+    }
 }
 void MainWindow::reinitializest(){
     st.init();

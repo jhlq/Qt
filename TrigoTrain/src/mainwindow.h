@@ -30,6 +30,7 @@ private:
 
 private slots:
     void addCircle(int x,int y,int player);
+    void addCircle(int x,int y,double sizemod,double r,double g,double b, double o);
     void drawGrid();
     void placemoves();
     void updatescore();
@@ -37,6 +38,7 @@ private slots:
     void makeNewGame(int sideLength,int unitSize);
     void saveTrainingExample();
     void evaluateMove();
+    void plotAllEvaluations();
     void reinitializest();
 
 private:
