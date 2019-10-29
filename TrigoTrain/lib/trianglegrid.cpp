@@ -1,6 +1,7 @@
 #include "trianglegrid.h"
 #include "util.h"
 #include <algorithm>
+#include <stdlib.h>     /* abs */
 
 TriangleGrid::TriangleGrid(int sideLength)
 {
@@ -24,7 +25,7 @@ void TriangleGrid::set(int x, int y, int player){
     triangles[y][x].player=player;
 }
 bool TriangleGrid::has(int x, int y){
-    if (y>=triangles.size() || x>=triangles[y].size()){
+    if (x<0 || y<0 || y>=triangles.size() || x>=triangles[y].size()){
         return false;
     }
     return true;
@@ -67,6 +68,52 @@ std::vector<Triangle> TriangleGrid::adjacent(const Triangle &triangle){
         }
     }
     return adj;
+}
+std::vector<Triangle> TriangleGrid::adjacentInds(const Triangle &triangle){
+    std::vector<Triangle> adji;
+    if (abs(triangle.x%2)==1){
+        adji.push_back(Triangle(triangle.x+1,triangle.y));
+        adji.push_back(Triangle(triangle.x-1,triangle.y));
+        adji.push_back(Triangle(triangle.x-1,triangle.y+1));
+    } else {
+        adji.push_back(Triangle(triangle.x+1,triangle.y));
+        adji.push_back(Triangle(triangle.x-1,triangle.y));
+        adji.push_back(Triangle(triangle.x+1,triangle.y-1));
+    }
+    return adji;
+}
+std::vector<Triangle> TriangleGrid::adjacentInds(const std::vector<Triangle> &group){
+    std::vector<Triangle> adjg;
+    int ng=group.size();
+    for (int n=0;n<ng;n++){
+        Triangle tri=group[n];
+        std::vector<Triangle> adj=adjacentInds(tri);
+        int ladj=adj.size();
+        for (int i=0;i<ladj;i++){
+            Triangle ttri=adj[i];
+            bool contains1=contains(group,ttri);
+            bool contains2=contains(adjg,ttri);
+            if (!contains1 && !contains2){
+                adjg.push_back(ttri);
+            }
+        }
+    }
+    return adjg;
+}
+std::vector<Triangle> TriangleGrid::adjacentIndsSpread(const Triangle &triangle,int spread){
+    std::vector<Triangle> adjis;
+    std::vector<Triangle> adji=adjacentInds(triangle);
+    for (int sp=0;sp<spread;sp++){
+        for (Triangle a:adji){
+            if (!(a==triangle)){// && !contains(adjis,a)){
+                adjis.push_back(a);
+            }
+        }
+        if (sp<spread-1){
+            adji=adjacentInds(adjis);
+        }
+    }
+    return adjis;
 }
 std::vector<Triangle> TriangleGrid::adjacent(const std::vector<Triangle> &group){
     std::vector<Triangle> adjg;

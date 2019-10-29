@@ -211,17 +211,16 @@ void Board::markDeadStones(const Triangle &tri){
 }
 void Board::markDeadStones(std::vector<Triangle> c){
     Triangle tri=c[0];
-    //bool dead=!tri.markedDead;
     if (c.empty()) return;
-    bool dead=!(tri.markedDead);
+    bool flipto=!(tri.markedDead);
     int a=-1;
-    if (dead){
+    if (flipto){
         a=1;
     }
     for (int i=0;i<c.size();i++){
         Triangle t=c[i];
-        if (t.player==tri.player){
-            tg.triangles[t.y][t.x].markedDead=dead;
+        if (t.player==tri.player && t.markedDead!=flipto){
+            tg.triangles[t.y][t.x].markedDead=flipto;
             stones[t.player-1]-=a;
             captures[otherPlayer(t.player)-1]+=a;
         }

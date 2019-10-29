@@ -18,6 +18,9 @@ public:
     int nTriangles();
     std::vector<Triangle> adjacent(int x,int y);
     std::vector<Triangle> adjacent(const Triangle &triangle);
+    std::vector<Triangle> adjacentInds(const Triangle &triangle);
+    std::vector<Triangle> adjacentInds(const std::vector<Triangle> &group);
+    std::vector<Triangle> adjacentIndsSpread(const Triangle &triangle,int spread);
     std::vector<Triangle> adjacent(const std::vector<Triangle> &group);
     std::vector<Triangle> adjacentPieces(const Triangle &tri);
     std::vector<Triangle> adjacentPieces(const std::vector<Triangle> &group);
