@@ -30,6 +30,9 @@ bool TriangleGrid::has(int x, int y){
     }
     return true;
 }
+bool TriangleGrid::has(const Triangle &t){
+    return has(t.x,t.y);
+}
 int TriangleGrid::nTriangles(){ //this should be sideLength^2
     int n=0;
     for(std::vector<Triangle> yv : this->triangles) {

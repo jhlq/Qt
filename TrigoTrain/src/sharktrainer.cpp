@@ -25,14 +25,14 @@
 //training the  model
 //#include <shark/ObjectiveFunctions/ErrorFunction.h>//error function, allows for minibatch training
 //#include <shark/ObjectiveFunctions/Loss/SquaredLoss.h>
-#include <shark/Algorithms/GradientDescent/Adam.h> //optimizer: simple gradient descent. //not included in old lib?
+#include <shark/Algorithms/GradientDescent/Adam.h> //optimizer: simple gradient descent.
 using namespace shark;
 
 SharkTrainer::SharkTrainer()
 {
 
 }
-RealVector SharkTrainer::makeEvalVector(Board board,Triangle move){
+/*RealVector SharkTrainer::makeEvalVector_old(Board board,Triangle move){
     int inputlength=board.tg.sideLength*board.tg.sideLength*6+3;
     RealVector input(inputlength,0);
     int n=0;
@@ -70,6 +70,47 @@ RealVector SharkTrainer::makeEvalVector(Board board,Triangle move){
     if (move.isPass()){
         input[n+2]=1;
     }
+    return input;
+}*/
+RealVector SharkTrainer::makeEvalVector(Board board,Triangle move){
+    std::vector<Triangle> inds=board.tg.adjacentIndsSpread(move,2);
+    int inputlength=inds.size()*5;
+    RealVector input(inputlength,0);
+    int n=0;
+    bool hasKO=false; //board.hasKO()?
+    for (Triangle i:inds){
+        if (board.tg.has(i)){
+            Triangle t=board.tg.get(i.x,i.y);
+            if (t.player>0){
+                if (t.player==move.player){
+                    input[n]=1;
+                } else {
+                    input[n+1]=1;
+                }
+            } else {
+                int imt=board.invalidMoveType(t.x,t.y,move.player); //add imt for other player?
+                if (imt>1){
+                    input[n+imt]=1;
+                    if (imt==3){
+                        hasKO=true;
+                    }
+                }
+            }
+        } else {
+            input[n+4]=1;
+        }
+        n+=5;
+    }
+    /*
+    if (hasKO){
+        input[n]=1;
+    }
+    if (move.player==2){
+        input[n+1]=1;
+    }
+    if (move.isPass()){
+        input[n+2]=1;
+    }*/
     return input;
 }
 void SharkTrainer::makeData(int sideLength,std::string inputfile){
@@ -206,7 +247,7 @@ void SharkTrainer::makeModel(){
     //DenseLayer layer1(dataset.inputShape(),hidden1);
     //DenseLayer layer2(layer1.outputShape(),hidden2);
     //LinearModel<RealVector> output(layer2.outputShape(),1);
-    auto l1=std::make_shared<DenseLayer>(dataset.inputShape(),hidden1);
+    auto l1=std::make_shared<DenseLayer>(dataset.inputShape(),hidden1,true);
     auto l2=std::make_shared<DenseLayer>(l1->outputShape(),hidden2);
     auto l3=std::make_shared<DenseLayer>(l2->outputShape(),hidden3);
     auto o=std::make_shared<LinearModel<RealVector>>(l3->outputShape(),1);

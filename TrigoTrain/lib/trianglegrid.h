@@ -13,6 +13,7 @@ public:
     Triangle get(int x,int y);
     void set(int x,int y,int player);
     bool has(int x,int y);
+    bool has(const Triangle &t);
     int sideLength;
     void setUpGrid();
     int nTriangles();
