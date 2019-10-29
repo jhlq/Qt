@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     diagramScene = new DiagramScene();
     diagramScene->setSceneRect(QRect(0, 0, 700, 600));
 
-    //connect all screenboard
+    //connect all screenboard, remember to add changes in makeNewGame also
     connect(diagramScene, SIGNAL(released(int,int)),this->screenboard,SLOT(clickevent(int,int)));
     connect(screenboard, SIGNAL(modifiedmoves()),this,SLOT(placemoves()));
     connect(screenboard, SIGNAL(modifiedscore()),this,SLOT(updatescore()));
@@ -30,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(passButton, SIGNAL(clicked()),screenboard,SLOT(pass()));
     QPushButton *scoreButton=this->findChild<QPushButton*>("scoreButton");
     connect(scoreButton, SIGNAL(clicked()),screenboard,SLOT(score()));
+    QPushButton *amButton=this->findChild<QPushButton*>("autoMarkButton");
+    connect(amButton, SIGNAL(clicked()),screenboard,SLOT(autoMark()));
 
 
     QPushButton *ngButton=this->findChild<QPushButton*>("newGameButton");
@@ -154,6 +156,8 @@ void MainWindow::makeNewGame(int sideLength,int unitSize){
     connect(passButton, SIGNAL(clicked()),screenboard,SLOT(pass()));
     QPushButton *scoreButton=this->findChild<QPushButton*>("scoreButton");
     connect(scoreButton, SIGNAL(clicked()),screenboard,SLOT(score()));
+    QPushButton *amButton=this->findChild<QPushButton*>("autoMarkButton");
+    connect(amButton, SIGNAL(clicked()),screenboard,SLOT(autoMark()));
     diagramScene->clear();
     drawGrid();
     updatescore();

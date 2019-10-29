@@ -128,6 +128,20 @@ std::vector<Triangle> TriangleGrid::getConnected(const Triangle &tri){
     }
     return group;
 }
+std::vector<Triangle> TriangleGrid::getConnectedSpace(std::vector<Triangle> cluster){
+    //std::vector<Triangle> checked;
+    std::vector<Triangle> space;
+    std::vector<Triangle> adj=adjacent(cluster);
+    for (Triangle a:adj){
+        if (a.player==0 && !contains(space,a)){
+            std::vector<Triangle> ls=getConnected(a);
+            for (Triangle l:ls){
+                space.push_back(l);
+            }
+        }
+    }
+    return space;
+}
 std::vector<Triangle> TriangleGrid::getGroup(const Triangle &tri){
     if (tri.player==0){
         std::vector<Triangle> v;
@@ -149,7 +163,6 @@ std::vector<Triangle> TriangleGrid::getCluster(const std::vector<Triangle> &grou
     std::vector<Triangle> adj=adjacent(group);
     std::vector<Triangle> adjempty;
     for (int ai=0;ai<adj.size();ai++){
-        //checked.push_back(adj[ai]);
         if (adj[ai].player==0){
             adjempty.push_back(adj[ai]);
         }

@@ -22,6 +22,7 @@ public:
     std::vector<Triangle> adjacentPieces(const Triangle &tri);
     std::vector<Triangle> adjacentPieces(const std::vector<Triangle> &group);
     std::vector<Triangle> getConnected(const Triangle &tri);
+    std::vector<Triangle> getConnectedSpace(std::vector<Triangle> cluster);
     std::vector<Triangle> getGroup(const Triangle &tri);
     std::vector<Triangle> getCluster(const std::vector<Triangle> &group);
     std::vector<Triangle> getCluster(int x,int y);

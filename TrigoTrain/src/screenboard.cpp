@@ -88,3 +88,7 @@ void ScreenBoard::score(){
     board.score();
     emit modifiedscore();
 }
+void ScreenBoard::autoMark(){
+    board.autoMarkDeadStones();
+    emit modifiedmoves();
+}

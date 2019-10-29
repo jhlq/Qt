@@ -58,6 +58,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="autoMarkButton">
+          <property name="text">
+           <string>Mark dead stones</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="Line" name="line">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>

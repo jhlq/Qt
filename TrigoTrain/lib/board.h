@@ -29,6 +29,9 @@ public:
     void score();
     void markDeadStones(int x,int y);
     void markDeadStones(const Triangle &tri);
+    void markDeadStones(std::vector<Triangle> c);
+    bool tryCaptureCluster(std::vector<Triangle> cluster,int maxit=100);
+    void autoMarkDeadStones();
     std::vector<std::string> history;
     int stones[2];
     int captures[2];

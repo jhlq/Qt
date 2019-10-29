@@ -1,6 +1,10 @@
 #include "board.h"
 #include "util.h"
 
+#include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* time */
+
+
 Board::Board(int sideLength) : tg(sideLength)
 {
     tg=TriangleGrid(sideLength);
@@ -203,7 +207,13 @@ void Board::markDeadStones(int x,int y){
 }
 void Board::markDeadStones(const Triangle &tri){
     std::vector<Triangle> c=tg.getCluster(tri);
-    bool dead=!tri.markedDead;
+    markDeadStones(c);
+}
+void Board::markDeadStones(std::vector<Triangle> c){
+    Triangle tri=c[0];
+    //bool dead=!tri.markedDead;
+    if (c.empty()) return;
+    bool dead=!(tri.markedDead);
     int a=-1;
     if (dead){
         a=1;
@@ -215,5 +225,75 @@ void Board::markDeadStones(const Triangle &tri){
             stones[t.player-1]-=a;
             captures[otherPlayer(t.player)-1]+=a;
         }
+    }
+}
+//#include <iostream>
+bool Board::tryCaptureCluster(std::vector<Triangle> cluster, int maxit){
+    std::vector<Triangle> space=tg.getConnectedSpace(cluster);
+    if (space.size()>tg.sideLength*tg.sideLength/5) return false;
+    Triangle c0=cluster[0];
+    int totalstones=stones[c0.player-1];
+    int clusterstones=cluster.size();
+    double stonelimit=(double)totalstones-(double)clusterstones*0.7;
+    srand(time(NULL));
+    int nwin=0;
+    //std::cout<<"Trying to capture cluster of size "<<cluster.size()<<std::endl;
+    for (int i=0;i<maxit;i++){
+        Board bc(*this);
+        std::vector<Triangle> cc=bc.tg.getCluster(c0.x,c0.y);
+        space=tg.getConnectedSpace(cc);
+        //std::cout<<"Nwin: "<<nwin<<std::endl;
+        int ss=space.size();
+        for (int si=0;si<ss*3;si++){
+            int r=rand() % space.size();
+            //std::cout<<"Placing move at "<<space[r].x<<", "<<space[r].y<<std::endl;
+            Triangle rt=space[r];
+            bool placedmove;
+            std::vector<Triangle> adjrt=bc.tg.adjacent(rt);
+            bool adjacentallsame=true;
+            for (Triangle a:adjrt){
+                if (a.player!=bc.player){
+                    adjacentallsame=false;
+                }
+            }
+            if (adjacentallsame){
+                placedmove=false;
+            } else {
+                placedmove=bc.placeMove(rt.x,rt.y);
+            }
+            //std::cout<<"It is now player "<<bc.tg.get(space[r].x,space[r].y).player<<std::endl;
+            if (placedmove){
+                if ((double)bc.stones[c0.player-1]<stonelimit){
+                    nwin++;
+                    break;
+                }
+                space.erase(space.begin()+r);
+                if (space.size()==0) break;
+            } else {
+                bc.switchPlayer();
+            }
+        }
+    }
+    if ((double)nwin/(double)maxit>0.5) return true;
+    return false;
+}
+void Board::autoMarkDeadStones(){
+    std::vector<Triangle> tried;
+    std::vector<std::vector<Triangle>> tobemarked;
+    for (Triangle m:moves){
+        if (!contains(tried,m)){
+            std::vector<Triangle> c=tg.getCluster(m);
+            bool success=tryCaptureCluster(c);
+            if (success){
+                //markDeadStones(c);
+                tobemarked.push_back(c);
+            }
+            for (Triangle ct:c){
+                tried.push_back(ct);
+            }
+        }
+    }
+    for (auto cluster:tobemarked){
+        markDeadStones(cluster);
     }
 }
