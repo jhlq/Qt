@@ -21,7 +21,6 @@ Triangle TriangleGrid::get(int x, int y){
     return triangles[y][x];
 }
 void TriangleGrid::set(int x, int y, int player){
-    //triangles[y][x].prevPlayer=triangles[y][x].player;
     triangles[y][x].player=player;
 }
 bool TriangleGrid::has(int x, int y){
@@ -47,17 +46,17 @@ std::vector<Triangle> TriangleGrid::adjacent(int x,int y){
 }
 std::vector<Triangle> TriangleGrid::adjacent(const Triangle &triangle){
     std::vector<Triangle> adj;
-    int leny=this->sideLength; //this->triangles.size();
+    int leny=this->triangles.size();//this->sideLength;
     int lenx=this->triangles[triangle.y].size();
     if (triangle.x%2==1){
         if (triangle.x+1<lenx){
             adj.push_back(this->triangles[triangle.y][triangle.x+1]);
         }
-        if (triangle.x-1>=0){
-            adj.push_back(this->triangles[triangle.y][triangle.x-1]);
-        }
         if (triangle.y+1<leny && triangle.x-1>=0){
             adj.push_back(this->triangles[triangle.y+1][triangle.x-1]);
+        }
+        if (triangle.x-1>=0){
+            adj.push_back(this->triangles[triangle.y][triangle.x-1]);
         }
     } else {
         if (triangle.x+1<lenx){
@@ -76,8 +75,8 @@ std::vector<Triangle> TriangleGrid::adjacentInds(const Triangle &triangle){
     std::vector<Triangle> adji;
     if (abs(triangle.x%2)==1){
         adji.push_back(Triangle(triangle.x+1,triangle.y));
-        adji.push_back(Triangle(triangle.x-1,triangle.y));
         adji.push_back(Triangle(triangle.x-1,triangle.y+1));
+        adji.push_back(Triangle(triangle.x-1,triangle.y));
     } else {
         adji.push_back(Triangle(triangle.x+1,triangle.y));
         adji.push_back(Triangle(triangle.x-1,triangle.y));
@@ -127,9 +126,7 @@ std::vector<Triangle> TriangleGrid::adjacent(const std::vector<Triangle> &group)
         int ladj=adj.size();
         for (int i=0;i<ladj;i++){
             Triangle ttri=adj[i];
-            //bool contains1=!(std::find(group.begin(), group.end(), ttri) == group.end());
             bool contains1=contains(group,ttri);
-            //bool contains2=!(std::find(adjg.begin(), adjg.end(), ttri) == adjg.end());
             bool contains2=contains(adjg,ttri);
             if (!contains1 && !contains2){
                 adjg.push_back(ttri);
@@ -275,21 +272,10 @@ int TriangleGrid::liberties(const Triangle &tri){
     std::vector<Triangle> group=getGroup(tri);
     return liberties(group);
 }
-//void TriangleGrid::addCaptured(int x, int y, Triangle &captured){
-//    triangles[y][x].captured.push_back(captured);
-//}
 void TriangleGrid::removeGroup(std::vector<Triangle> &group){
     for (int n=0;n<group.size();n++){
-        //group[n].prevPlayer=group[n].player; //remove multiple indexing? Currently supports removing a mixed group...
-        //group[n].player=0;
         Triangle gt=group[n];
-        //Triangle t=get(gt.x,gt.y);
-        //t.prevPlayer=gt.player;
-        //t.player=0;
         set(gt.x,gt.y,0);
-        //capturer.captured.push_back(group[n]);
-        //Triangle ct=get(gt.x,gt.y);
-        //addCaptured(capturer.x,capturer.y,ct);
     }
 }
 std::string TriangleGrid::historyString(){

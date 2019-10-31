@@ -7,9 +7,8 @@
 
 Board::Board(int sideLength) : tg(sideLength)
 {
-    tg=TriangleGrid(sideLength);
+    //tg=TriangleGrid(sideLength);
     player=1;
-    //std::vector<std::tring> history; //add status for blank board?
     stones[0]=0;
     stones[1]=0;
     captures[0]=0;
@@ -236,16 +235,13 @@ bool Board::tryCaptureCluster(std::vector<Triangle> cluster, int maxit){
     double stonelimit=(double)totalstones-(double)clusterstones*0.7;
     srand(time(NULL));
     int nwin=0;
-    //std::cout<<"Trying to capture cluster of size "<<cluster.size()<<std::endl;
     for (int i=0;i<maxit;i++){
         Board bc(*this);
         std::vector<Triangle> cc=bc.tg.getCluster(c0.x,c0.y);
         space=tg.getConnectedSpace(cc);
-        //std::cout<<"Nwin: "<<nwin<<std::endl;
         int ss=space.size();
         for (int si=0;si<ss*3;si++){
             int r=rand() % space.size();
-            //std::cout<<"Placing move at "<<space[r].x<<", "<<space[r].y<<std::endl;
             Triangle rt=space[r];
             bool placedmove;
             std::vector<Triangle> adjrt=bc.tg.adjacent(rt);
@@ -260,7 +256,6 @@ bool Board::tryCaptureCluster(std::vector<Triangle> cluster, int maxit){
             } else {
                 placedmove=bc.placeMove(rt.x,rt.y);
             }
-            //std::cout<<"It is now player "<<bc.tg.get(space[r].x,space[r].y).player<<std::endl;
             if (placedmove){
                 if ((double)bc.stones[c0.player-1]<stonelimit){
                     nwin++;

@@ -4,25 +4,12 @@
 #include <fstream>
 #include "board.h"
 #include <iostream>
-//#include <filesystem> //requires standard 17
-// #define WINDOWS  /* uncomment this line to use it for windows.*/
-/*#ifdef WINDOWS
-#include <direct.h>
-#define GetCurrentDir _getcwd
-#else
-#include <unistd.h>
-#define GetCurrentDir getcwd
-#endif */
 #include <boost/filesystem.hpp>
 
 #include <boost/algorithm/string.hpp>
 
 #include <clocale>  // std::setlocate
 
-//the model
-//#include <shark/Models/LinearModel.h>//single dense layer
-//#include <shark/Models/ConcatenatedModel.h>//for stacking layers, proveides operator>>
-//training the  model
 #include <shark/ObjectiveFunctions/ErrorFunction.h>//error function, allows for minibatch training
 #include <shark/ObjectiveFunctions/Loss/SquaredLoss.h>
 #include <shark/Algorithms/GradientDescent/Adam.h> //optimizer: simple gradient descent.
@@ -179,21 +166,15 @@ RegressionDataset SharkTrainer::loadData(const std::string& dataFile,const std::
                 importCSV(inputs, dataFile);
                 importCSV(labels, labelFile);
         } catch (Exception exc) {
-            //char buff[FILENAME_MAX];
-            //GetCurrentDir( buff, FILENAME_MAX );
-            //std::string current_working_dir(buff);
             boost::filesystem::path current_working_dir=boost::filesystem::current_path();
             std::cerr << "Unable to open file " <<  dataFile << " and/or " << labelFile <<
                              ". Check paths! Current dir is " << current_working_dir << " Exception: " <<exc.what()<< std::endl;
             exit(EXIT_FAILURE);
         }
-        //now we create a complete dataset which represents pairs of inputs and labels
-        //RegressionDataset data(inputs, labels);
         dataset=RegressionDataset(inputs,labels);
         return dataset;
 }
 void SharkTrainer::makeModel(){
-    //build the network
     int hidden1=700;
     int hidden2=500;
     int hidden3=300;
@@ -221,7 +202,6 @@ void SharkTrainer::trainModel(){
             optimizer.step(errorFunction);
             std::cout<<i<<" "<<optimizer.solution().value<<std::endl;
     }
-    //copy solution parameters into model
     model.setParameterVector(optimizer.solution().point);
 }
 void SharkTrainer::init(){
@@ -231,60 +211,7 @@ void SharkTrainer::init(){
     trainModel();
 }
 void SharkTrainer::start(){
-    //load data
-    //RegressionDataset data = loadData("inputs.csv","labels.csv");
-    //We use a dense linear model with rectifier activations
-    /*typedef LinearModel<RealVector, RectifierNeuron> DenseLayer;
-
-    //build the network
-    int hidden1=300;
-    int hidden2=500;
-    DenseLayer layer1(data.inputShape(),hidden1);
-    DenseLayer layer2(layer1.outputShape(),hidden2);
-    LinearModel<RealVector> output(layer2.outputShape(),1); */
-
-    //DenseLayer layer1(3,5);
-    //DenseLayer layer2(layer1.outputShape(),7);
-    //LinearModel<RealVector> output(layer2.outputShape(),1);
-    //auto network = layer1 >> layer2 >> output;
-    //model=network;
-    //RealVector t(3);
-    //t[1]=1;
-    //std::cout<<"Testing network: "<<network(t)<<std::endl;
-
-    //create the supervised problem.
-    //CrossEntropy loss;
-    //SquaredLoss<> loss;
-    //ErrorFunction<> errorFunction(data, &network, &loss, true);//enable minibatch training
-
-    //optimize the model
-    //std::cout<<"training network"<<std::endl;
-    //initRandomNormal(network,0.001);
-    //std::cout<<"Testing initialized network: "<<network(t)<<std::endl;
-    //Adam<> optimizer;
-    /*error.init();
-    optimizer.init(error);
-    for(std::size_t i = 0; i != iterations; ++i){
-            optimizer.step(error);
-            std::cout<<i<<" "<<optimizer.solution().value<<std::endl;
-    }
-    network.setParameterVector(optimizer.solution().point);*/
     /*
-    CG<> optimizer;
-    errorFunction.init();
-    optimizer.init(errorFunction);
-    for(int i = 0; i != 100; ++i)
-    {
-            optimizer.step(errorFunction);
-            std::cout<<i<<" "<<optimizer.solution().value<<std::endl;
-    }
-    //copy solution parameters into model
-    network.setParameterVector(optimizer.solution().point);
-    */
-    //std::vector<int> v={1,2,3};
-    //RealVector rv({1,2,3});
-    //rv.push_back(4.5);
-    //std::cout<<rv<<std::endl;
     SharkTrainer st;
     st.loadData("inputs.csv","labels.csv");
     std::cout<<"Loaded data."<<std::endl;
@@ -305,6 +232,7 @@ void SharkTrainer::start(){
     RealVector p2=makeEvalVector(b,Triangle(-1,-1,2));
     eval=st.model(p2);
     std::cout<<"Pass second? "<<eval<<std::endl;
+    */
 }
 double SharkTrainer::evaluateMove(Board b,Triangle move){
     RealVector rv=makeEvalVector(b,move);

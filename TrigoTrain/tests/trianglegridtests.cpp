@@ -115,3 +115,28 @@ BOOST_AUTO_TEST_CASE(test7)
     tg.removeGroup(v);
     BOOST_CHECK_EQUAL(tg.get(1,5).player,0);
 }
+BOOST_AUTO_TEST_CASE(testspread)
+{
+    int sideLength=9;
+    TriangleGrid tg(sideLength);
+    std::vector<Triangle> sp=tg.adjacentIndsSpread(Triangle(0,0),1);
+    BOOST_CHECK_EQUAL(sp.size(),3);
+    sp=tg.adjacentIndsSpread(Triangle(0,0),2);
+    BOOST_CHECK_EQUAL(sp.size(),9);
+    sp=tg.adjacentIndsSpread(Triangle(0,0),3);
+    BOOST_CHECK_EQUAL(sp.size(),18);
+    sp=tg.adjacentIndsSpread(Triangle(0,0),4);
+    BOOST_CHECK_EQUAL(sp.size(),30);
+    sp=tg.adjacentIndsSpread(Triangle(0,0),5);
+    BOOST_CHECK_EQUAL(sp.size(),45);
+    sp=tg.adjacentIndsSpread(Triangle(1,0),1);
+    BOOST_CHECK_EQUAL(sp.size(),3);
+    sp=tg.adjacentIndsSpread(Triangle(1,0),2);
+    BOOST_CHECK_EQUAL(sp.size(),9);
+    sp=tg.adjacentIndsSpread(Triangle(1,0),3);
+    BOOST_CHECK_EQUAL(sp.size(),18);
+    sp=tg.adjacentIndsSpread(Triangle(1,0),4);
+    BOOST_CHECK_EQUAL(sp.size(),30);
+    sp=tg.adjacentIndsSpread(Triangle(1,0),5);
+    BOOST_CHECK_EQUAL(sp.size(),45);
+}

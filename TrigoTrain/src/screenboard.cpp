@@ -3,14 +3,9 @@
 
 #define PI 3.14159265
 
-//ScreenBoard::ScreenBoard(int sideLength, int _unitSize){
-//    ScreenBoard(sideLength,_unitSize,50,50);
-//}
-
 ScreenBoard::ScreenBoard(int sideLength, int _unitSize, int _offsetX, int _offsetY)
     : board(sideLength)
 {
-//    board=Board(sideLength);
     unitSize=_unitSize;
     offsetX=_offsetX;
     offsetY=_offsetY;
@@ -22,10 +17,6 @@ ScreenTriangle ScreenBoard::makeTriangle(int x,int y){
     double oy=offsetY;
     int remainder=x%2;
     int ex=x-remainder;
-    //double degrees = 30.0;
-    //double radians = Math.toRadians(degrees);
-    //double c=gridSpace/(2*Math.cos(radians)); //=unitSize
-    //double h=Math.sqrt(Math.pow(c,2)-Math.pow(gridSpace/2,2));
     double h=unitSize*cos(PI/3);
     double l=2*unitSize*cos(PI/6);
     if (remainder==1){

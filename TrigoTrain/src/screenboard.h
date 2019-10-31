@@ -10,7 +10,6 @@ class ScreenBoard : public QObject
 {
     Q_OBJECT
 public:
-    //ScreenBoard(int sideLength,int _unitSize);
     ScreenBoard(int sideLength,int _unitSize=30,int _offsetX=50,int _offsetY=50);
     Board board;
     std::vector<std::vector<ScreenTriangle>> triangles;
